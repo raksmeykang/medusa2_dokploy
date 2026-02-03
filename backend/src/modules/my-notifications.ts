@@ -1,24 +1,12 @@
 import { AbstractNotificationProviderService } from "@medusajs/framework/utils"
 import nodemailer from "nodemailer"
 
-// Define an interface for our options to keep TypeScript happy
-interface SMTPProviderOptions {
-  from: string
-  host: string
-  port: number
-  secure: boolean
-  auth: {
-    user: string
-    pass: string
-  }
-}
-
 export default class MyNotificationProvider extends AbstractNotificationProviderService {
     static identifier = "gmail-smtp"
     protected transporter: any
-    protected config: SMTPProviderOptions
+    protected config: any
 
-    constructor(container: any, options: SMTPProviderOptions) {
+    constructor(container: any, options: any) {
         // @ts-ignore
         super(container, options)
         this.config = options
@@ -38,7 +26,7 @@ export default class MyNotificationProvider extends AbstractNotificationProvider
             from: this.config.from,
             to: notification.to,
             subject: "Notification from Nokor24",
-            text: notification.data?.message || "",
+            text: notification.data?.message || "New message from Nokor24",
             html: notification.data?.html || `<p>${notification.data?.message}</p>`,
         })
     }

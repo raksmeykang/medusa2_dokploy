@@ -27,7 +27,9 @@ module.exports = defineConfig({
         providers: [
           {
             // This is the key: resolving to a local file avoids the error
-            resolve: "./src/modules/email-provider", 
+            resolve: process.env.NODE_ENV === "development" 
+            ? "./src/modules/my-notifications" 
+            : "./dist/modules/my-notifications", 
             id: "nodemailer",
             options: {
               channels: ["email"],
