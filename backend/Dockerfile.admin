@@ -8,18 +8,17 @@ RUN apk add --no-cache python3 make g++
 RUN corepack enable && corepack prepare yarn@stable --activate
 ENV YARN_NODE_LINKER=node-modules
 
-# Copy package files and install
-COPY package.json yarn.lock* ./
+# CHANGE: Point to the backend folder specifically
+COPY backend/package.json backend/yarn.lock* ./
 RUN yarn install
 
-# Copy source code
-COPY . .
+# CHANGE: Copy the backend folder content into the container
+COPY backend/ .
 
-# Build the Admin Dashboard static files
-# This is the heavy part that we want isolated
+# Build the Admin Dashboard
 RUN yarn medusa build
 
 EXPOSE 9000
 
-# Start the server to serve the build we just created
+# Start the server
 CMD ["yarn", "medusa", "start"]
