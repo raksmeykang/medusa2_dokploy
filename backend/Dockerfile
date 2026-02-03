@@ -2,10 +2,11 @@ FROM node:20-alpine
 WORKDIR /app
 RUN apk add --no-cache python3 make g++
 
-# Using a wildcard * ensures the build doesn't crash if one file is slightly misplaced
-COPY package.json yarn.loc[k] ./
+COPY package.json yarn.lock* ./
 
-RUN yarn install --frozen-lockfile
+# Removed --frozen-lockfile to allow auto-sync
+RUN yarn install
+
 COPY . .
 RUN yarn build
 EXPOSE 9000
