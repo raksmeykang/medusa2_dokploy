@@ -7,10 +7,10 @@
 11- **General tab** : Provider \= Github 
 
 - Branch \= main  
-- Build path= /  
-- Build type \= Dockerfile  
-- Dockerfile \= /backend/Dockerfile.admin  
-- Docker Context Path \= /  
+- Build path= ```/```  
+- Build type \= ```Dockerfile```  
+- Dockerfile \= ```/backend/Dockerfile.admin```  
+- Docker Context Path \= ```/ ```
 - Docker Build Stage \= Optional
 
 12- **Environment:** (make sure add “sslmode=disable at the end of postgres url)
