@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  # -------------------------------------------------------
+  # 1. MEDUSA BACKEND (API & ADMIN)
+  # -------------------------------------------------------
+  medusa-backend:
+    container_name: medusa-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    # Map container port 9000 to the outside
+    ports:
+      - "9000:9000"
+    environment:
+      - NODE_ENV=production
+      # We just declare that these exist; Dokploy will inject the actual values
+      - DATABASE_URL
+      - REDIS_URL
+      - JWT_SECRET
+      - COOKIE_SECRET
+      - ADMIN_CORS
+      - STORE_CORS
+      - DATABASE_TYPE=postgres
+
+  # -------------------------------------------------------
+  # 2. MEDUSA STOREFRONT (NEXT.JS)
+  # -------------------------------------------------------
+  medusa-storefront:
+    container_name: medusa-storefront
+    build:
+      context: ./storefront
+      dockerfile: Dockerfile
+      # We pass the backend URL as a build argument so Next.js can bake it in
+      args:
+        NEXT_PUBLIC_MEDUSA_BACKEND_URL: ${NEXT_PUBLIC_MEDUSA_BACKEND_URL}
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_MEDUSA_BACKEND_URL
+    depends_on:
+      - medusa-backend
