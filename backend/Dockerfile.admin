@@ -1,0 +1,25 @@
+FROM node:20-alpine
+WORKDIR /app
+
+# Install build dependencies
+RUN apk add --no-cache python3 make g++
+
+# Enable Corepack for Yarn Berry
+RUN corepack enable && corepack prepare yarn@stable --activate
+ENV YARN_NODE_LINKER=node-modules
+
+# Copy package files and install
+COPY package.json yarn.lock* ./
+RUN yarn install
+
+# Copy source code
+COPY . .
+
+# Build the Admin Dashboard static files
+# This is the heavy part that we want isolated
+RUN yarn medusa build
+
+EXPOSE 9000
+
+# Start the server to serve the build we just created
+CMD ["yarn", "medusa", "start"]
