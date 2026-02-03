@@ -5,20 +5,21 @@ WORKDIR /app
 # Enable Corepack for Yarn 4
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
-# Copy all files
+# Copy all storefront files
 COPY . .
 
-# --- DECLARE BUILD ARGUMENTS ---
+# --- ADD THESE ARGS HERE ---
+# These allow Dokploy to pass your variables into the build process
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_BASE_URL
 
-# --- CONVERT ARGS TO ENV FOR NEXT.JS ---
+# Now make them available to the 'yarn build' command
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
-# Bypass fetch errors during build
+# Skip build-time data fetching to prevent ECONNREFUSED
 ENV SKIP_PRODUCT_VALIDATION=true
 
 RUN yarn install
