@@ -22,9 +22,9 @@ export default class MyNotificationProvider extends AbstractNotificationProvider
         return await this.transporter.sendMail({
             from: this.options.from,
             to: notification.to,
-            subject: "You've been invited to Nokor24",
-            text: `Invite Link: ${notification.data.url}`, // Simple for now
-            html: `<p>Invite Link: <a href="${notification.data.url}">${notification.data.url}</a></p>`,
+            subject: notification.subject || "Medusa Notification",
+            text: notification.data?.message || "You have a new notification",
+            html: notification.data?.html || `<p>${notification.data?.message}</p>`,
         })
     }
 }

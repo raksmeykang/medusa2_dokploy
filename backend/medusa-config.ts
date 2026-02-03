@@ -26,7 +26,7 @@ module.exports = defineConfig({
       options: {
         providers: [
           {
-            resolve: "./src/modules/my-notifications", // Local Path
+            resolve: "./src/modules/my-notifications", // Local Path to the file we just made
             id: "gmail",
             options: {
               channels: ["email"],
