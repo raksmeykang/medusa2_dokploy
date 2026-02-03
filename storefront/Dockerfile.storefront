@@ -1,20 +1,23 @@
 FROM node:20-alpine
 
+# Set the working directory inside the container
 WORKDIR /app
 
 # Enable Corepack for Yarn 4
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
-# Copy everything in the storefront directory
-# This avoids the "not found" error for specific files
+# Copy everything from the storefront folder into the container
+# This includes package.json, yarn.lock, .yarn, etc.
 COPY . .
 
-# Install dependencies 
-# (Yarn will look for package.json in the current directory)
+# Install dependencies using the files we just copied
 RUN yarn install
 
 # Build the Next.js storefront
 RUN yarn build
+
+# Next.js usually runs on 3000 by default
+EXPOSE 3000
 
 # Start the application
 CMD ["yarn", "start"]
