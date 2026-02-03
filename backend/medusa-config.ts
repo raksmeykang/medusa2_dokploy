@@ -26,17 +26,20 @@ module.exports = defineConfig({
       options: {
         providers: [
           {
-            resolve: "./src/modules/my-notifications", // Local Path to the file we just made
-            id: "gmail",
+            // This is the key: resolving to a local file avoids the error
+            resolve: "./src/modules/email-provider", 
+            id: "nodemailer",
             options: {
               channels: ["email"],
               from: process.env.SMTP_USER,
-              host: process.env.SMTP_HOST,
-              port: parseInt(process.env.SMTP_PORT || "587"),
-              secure: process.env.SMTP_PORT === "465",
-              auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASSWORD,
+              transport: {
+                host: process.env.SMTP_HOST,
+                port: parseInt(process.env.SMTP_PORT || "587"),
+                secure: process.env.SMTP_PORT === "465",
+                auth: {
+                  user: process.env.SMTP_USER,
+                  pass: process.env.SMTP_PASSWORD,
+                },
               },
             },
           },
