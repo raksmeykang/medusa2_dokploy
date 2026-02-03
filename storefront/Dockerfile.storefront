@@ -5,14 +5,13 @@ WORKDIR /app
 # Enable Corepack for Yarn 4
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
-# Only copy files that are definitely in your repo
-COPY package.json yarn.lock ./
-
-# Install dependencies
-RUN yarn install
-
-# Copy the rest of the application code
+# Copy everything in the storefront directory
+# This avoids the "not found" error for specific files
 COPY . .
+
+# Install dependencies 
+# (Yarn will look for package.json in the current directory)
+RUN yarn install
 
 # Build the Next.js storefront
 RUN yarn build
