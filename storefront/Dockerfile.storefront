@@ -2,15 +2,14 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Enable Corepack to use Yarn 4
+# Enable Corepack for Yarn 4
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
-# Copy only dependency files first for better caching
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
+# Only copy files that are definitely in your repo
+COPY package.json yarn.lock ./
 
 # Install dependencies
-RUN yarn install --frozen-lockfile
+RUN yarn install
 
 # Copy the rest of the application code
 COPY . .
