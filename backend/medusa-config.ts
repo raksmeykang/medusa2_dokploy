@@ -20,16 +20,17 @@ module.exports = defineConfig({
   admin: {
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
   },
-  modules: [
+  // medusa-config.ts
+modules: [
   {
     resolve: "@medusajs/medusa/notification",
     options: {
       providers: [
         {
-          // This dynamically picks 'src' for Codespaces and 'dist' for Dokploy
+          // We update this to match your new filename: email-provider
           resolve: process.env.NODE_ENV === "development" 
-            ? "./src/modules/my-notifications" 
-            : "./dist/modules/my-notifications", 
+            ? "./src/modules/email-provider" 
+            : "./dist/modules/email-provider", 
           id: "nodemailer",
           options: {
             channels: ["email"],
