@@ -5,20 +5,18 @@ WORKDIR /app
 # Enable Corepack for Yarn 4
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
-# Copy all files
+# Copy everything
 COPY . .
 
-# --- ADD THESE LINES ---
-# These allow Dokploy to pass environment variables into the build process
+# 1. Declare ARGs (These receive values from Dokploy during build)
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_BASE_URL
 
-# Make them available to the 'yarn build' command
+# 2. Assign ARGs to ENVs (Next.js looks for these ENVs during 'yarn build')
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
-# -----------------------
 
 # Bypass fetch errors during build
 ENV SKIP_PRODUCT_VALIDATION=true
