@@ -76,7 +76,10 @@ Detailed instructions for deploying the Medusa backend using Dokploy.
 15. Goto -> **General** -> **Deploy Settings** -> Terminal
 16. Select backend container that **running**
 17. Navigate to **bin/sh**
-18. run this #cd /app && yarn medusa user --email Your@Email --password YourSecurePassword123!
-19. Your Admin info will be 
+18. run this #
+    ```
+    cd /app && yarn medusa user --email Your@Email --password YourSecurePassword123!
+    ```
+20. Your Admin info will be 
     - Username : Your@Email
     - Password : YourSecurePassword123!
