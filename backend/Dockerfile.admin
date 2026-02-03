@@ -4,21 +4,23 @@ WORKDIR /app
 # Install build dependencies
 RUN apk add --no-cache python3 make g++
 
-# Enable Corepack for Yarn Berry
+# Enable Corepack for Yarn
 RUN corepack enable && corepack prepare yarn@stable --activate
 ENV YARN_NODE_LINKER=node-modules
 
-# CHANGE: Point to the backend folder specifically
+# Copy package files and install
 COPY backend/package.json backend/yarn.lock* ./
 RUN yarn install
 
-# CHANGE: Copy the backend folder content into the container
+# Copy source and build
 COPY backend/ .
-
-# Build the Admin Dashboard
 RUN yarn medusa build
+
+# NEW: Move into the production server directory for the final run
+WORKDIR /app/.medusa/server
+RUN yarn install --production
 
 EXPOSE 9000
 
-# Start the server
+# Start from the server build directory
 CMD ["yarn", "medusa", "start"]
