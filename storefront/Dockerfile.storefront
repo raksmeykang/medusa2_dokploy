@@ -1,23 +1,25 @@
 FROM node:20-alpine
 
-# Set the working directory inside the container
 WORKDIR /app
 
 # Enable Corepack for Yarn 4
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
-# Copy everything from the storefront folder into the container
-# This includes package.json, yarn.lock, .yarn, etc.
+# Copy all files
 COPY . .
 
-# Install dependencies using the files we just copied
+# Install dependencies
 RUN yarn install
+
+# CRITICAL: Add these to bypass the build-time fetch error
+ENV SKIP_PRODUCT_VALIDATION=true
+# Set this to a dummy value or your real URL; 
+# the SKIP variable above is the one that prevents the crash.
+ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=https://admin.nokor24.com
 
 # Build the Next.js storefront
 RUN yarn build
 
-# Next.js usually runs on 3000 by default
 EXPOSE 3000
 
-# Start the application
 CMD ["yarn", "start"]
