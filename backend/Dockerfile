@@ -11,15 +11,17 @@ ENV YARN_NODE_LINKER=node-modules
 # Copy package files
 COPY package.json yarn.lock* ./
 
-# Run install - the environment variable above ensures node_modules is created
+# Run install
 RUN yarn install
 
 # Copy the rest of the source
 COPY . .
 
-# Explicitly run the build using the local medusa-cli if necessary
+# Build the backend logic
 RUN yarn build
 
 EXPOSE 9000
-# This version uses the "Shell form" so Docker knows how to handle the &&
+
+# We removed 'medusa build' here because this instance is API-only. 
+# Migrations stay because the API must ensure the DB is ready.
 CMD yarn medusa db:migrate && yarn start
