@@ -1,18 +1,23 @@
 FROM node:20-alpine
 WORKDIR /app
+
+# Install build dependencies
 RUN apk add --no-cache python3 make g++
 
-# 1. Enable Corepack to use the correct Yarn version
-RUN corepack enable
+# Enable Corepack and force Yarn to use the standard node_modules structure
+RUN corepack enable && corepack prepare yarn@stable --activate
+ENV YARN_NODE_LINKER=node-modules
 
+# Copy package files
 COPY package.json yarn.lock* ./
 
-# 2. Force Yarn to use node_modules linker and install
-RUN yarn config set nodeLinker node-modules && yarn install
+# Run install - the environment variable above ensures node_modules is created
+RUN yarn install
 
+# Copy the rest of the source
 COPY . .
 
-# 3. Build the project
+# Explicitly run the build using the local medusa-cli if necessary
 RUN yarn build
 
 EXPOSE 9000
