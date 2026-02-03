@@ -33,8 +33,23 @@ module.exports = defineConfig({
               channels: ["feed"],
             },
           },
-          // To use real SMTP, you will need to install the nodemailer provider
-          // But for now, let's at least ensure the module is registered
+          {
+            resolve: "@perseidesjs/notification-nodemailer",
+            id: "nodemailer",
+            options: {
+              channels: ["email"],
+              from: process.env.SMTP_USER,
+              transport: {
+                host: process.env.SMTP_HOST,
+                port: parseInt(process.env.SMTP_PORT || "587"),
+                secure: process.env.SMTP_PORT === "465",
+                auth: {
+                  user: process.env.SMTP_USER,
+                  pass: process.env.SMTP_PASSWORD,
+                },
+              },
+            },
+          },
         ],
       },
     },
