@@ -26,27 +26,17 @@ module.exports = defineConfig({
       options: {
         providers: [
           {
-            resolve: "@medusajs/medusa/notification-local",
-            id: "local",
-            options: {
-              name: "Local Notification Provider",
-              channels: ["feed"],
-            },
-          },
-          {
-            resolve: "@perseidesjs/notification-nodemailer",
-            id: "nodemailer",
+            resolve: "./src/modules/my-notifications", // Local Path
+            id: "gmail",
             options: {
               channels: ["email"],
               from: process.env.SMTP_USER,
-              transport: {
-                host: process.env.SMTP_HOST,
-                port: parseInt(process.env.SMTP_PORT || "587"),
-                secure: process.env.SMTP_PORT === "465",
-                auth: {
-                  user: process.env.SMTP_USER,
-                  pass: process.env.SMTP_PASSWORD,
-                },
+              host: process.env.SMTP_HOST,
+              port: parseInt(process.env.SMTP_PORT || "587"),
+              secure: process.env.SMTP_PORT === "465",
+              auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASSWORD,
               },
             },
           },
