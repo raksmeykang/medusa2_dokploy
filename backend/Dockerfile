@@ -21,4 +21,4 @@ COPY . .
 RUN yarn build
 
 EXPOSE 9000
-CMD ["yarn", "start"]
+CMD ["sh", "-c", "yarn medusa db:migrate && yarn start"]
