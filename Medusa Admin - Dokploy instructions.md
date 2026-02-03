@@ -2,7 +2,7 @@
 
 **\#\#\# Creating** **Backend Instance**  
 9- Create Instance \-\> Service type \= Application   
-10- Instance name : Admin
+10- Instance name : ```Admin```
 
 11- **General tab** : Provider \= Github 
 
@@ -32,12 +32,12 @@ HOST=0.0.0.0
 
 13- **Domain**
 
-- Host \= admin.domain.com  
-- Path \= /  
-- Internal path \= /  
-- Container port \= 9000  
-- Https \= enable  
-- Certificate provider \= Let’s encrypt
+- Host \= ```admin.domain.com```  
+- Path \= ```/```  
+- Internal path \= ```/```  
+- Container port \= ```9000```  
+- Https \= ```enable```  
+- Certificate provider \= ```Let’s encrypt```
 
 14- **Deploy**
 
