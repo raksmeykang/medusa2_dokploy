@@ -2,6 +2,8 @@
 
 ## Correct Deploy Order
 
-1. **Backend** -> Read ([Medusa Admin - Dokploy instructions.md](https://github.com/raksmeykang/medusa2_dokploy/blob/main/Medusa%20Admin%20-%20Dokploy%20instructions.md))
-2. **Admin** -> Read ([Medusa Admin - Dokploy.md](https://github.com/raksmeykang/medusa2_dokploy/blob/main/Medusa%20backend%20-%20Dokploy%20%20-%20Instruction.md))
-3. **StoreFront** -> Development
+1. Clone this github repo to your github repo
+2. Connect your github with Dokploy
+3. **Backend** -> Read ([Medusa Admin - Dokploy instructions.md](https://github.com/raksmeykang/medusa2_dokploy/blob/main/Medusa%20Admin%20-%20Dokploy%20instructions.md))
+4. **Admin** -> Read ([Medusa Admin - Dokploy.md](https://github.com/raksmeykang/medusa2_dokploy/blob/main/Medusa%20backend%20-%20Dokploy%20%20-%20Instruction.md))
+5. **StoreFront** -> Development
