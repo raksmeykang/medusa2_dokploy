@@ -18,7 +18,25 @@ module.exports = defineConfig({
     }
   },
   admin: {
-    // This allows Dokploy to control if the admin builds or not
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
-  }
+  },
+  modules: [
+    {
+      resolve: "@medusajs/medusa/notification",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/medusa/notification-local",
+            id: "local",
+            options: {
+              name: "Local Notification Provider",
+              channels: ["feed"],
+            },
+          },
+          // To use real SMTP, you will need to install the nodemailer provider
+          // But for now, let's at least ensure the module is registered
+        ],
+      },
+    },
+  ],
 })
