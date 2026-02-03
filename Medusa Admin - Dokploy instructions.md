@@ -13,7 +13,7 @@
 - Docker Context Path \= ```/ ```
 - Docker Build Stage \= Optional
 
-12- **Environment:** (make sure add “sslmode=disable at the end of postgres url)
+12- **Environment:** (make sure add “```sslmode=disable``` at the end of postgres url)
 ```env
 MEDUSA\_ADMIN\_BACKEND\_URL=https://api.domain.com  
 DATABASE\_URL=postgresql://postgres:1…:5432/postgres?sslmode=disable  
