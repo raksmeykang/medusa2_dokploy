@@ -5,8 +5,6 @@ loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
-    // Note: Medusa v2 often looks for redis_url or redisUrl 
-    // depending on the version, ensure it matches your env
     redisUrl: process.env.REDIS_URL, 
     http: {
       storeCors: process.env.STORE_CORS!,
@@ -15,9 +13,12 @@ module.exports = defineConfig({
       jwtSecret: process.env.JWT_SECRET || "supersecret",
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
-    // Adding this here explicitly disables SSL for the pg driver
     databaseDriverOptions: { 
       ssl: false 
     }
+  },
+  admin: {
+    // This allows Dokploy to control if the admin builds or not
+    disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
   }
 })
