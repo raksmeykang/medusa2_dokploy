@@ -14,7 +14,7 @@
 - Docker Build Stage \= Optional
 
 12- **Environment:** (make sure add “sslmode=disable at the end of postgres url)
-
+```env
 MEDUSA\_ADMIN\_BACKEND\_URL=https://api.domain.com  
 DATABASE\_URL=postgresql://postgres:1…:5432/postgres?sslmode=disable  
 REDIS\_URL=redis://default:...:6379
@@ -28,6 +28,7 @@ COOKIE\_SECRET=strong-jwt-secret-for-medusa-backend
 
 ADMIN\_CORS=https://admin.domain.com  
 HOST=0.0.0.0
+```
 
 13- **Domain**
 
