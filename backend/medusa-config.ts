@@ -21,32 +21,30 @@ module.exports = defineConfig({
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
   },
   modules: [
-    {
-      resolve: "@medusajs/medusa/notification",
-      options: {
-        providers: [
-          {
-            // This is the key: resolving to a local file avoids the error
-            resolve: process.env.NODE_ENV === "development" 
+  {
+    resolve: "@medusajs/medusa/notification",
+    options: {
+      providers: [
+        {
+          // This dynamically picks 'src' for Codespaces and 'dist' for Dokploy
+          resolve: process.env.NODE_ENV === "development" 
             ? "./src/modules/my-notifications" 
             : "./dist/modules/my-notifications", 
-            id: "nodemailer",
-            options: {
-              channels: ["email"],
-              from: process.env.SMTP_USER,
-              transport: {
-                host: process.env.SMTP_HOST,
-                port: parseInt(process.env.SMTP_PORT || "587"),
-                secure: process.env.SMTP_PORT === "465",
-                auth: {
-                  user: process.env.SMTP_USER,
-                  pass: process.env.SMTP_PASSWORD,
-                },
-              },
+          id: "nodemailer",
+          options: {
+            channels: ["email"],
+            from: process.env.SMTP_USER,
+            host: process.env.SMTP_HOST,
+            port: parseInt(process.env.SMTP_PORT || "587"),
+            secure: process.env.SMTP_PORT === "465",
+            auth: {
+              user: process.env.SMTP_USER,
+              pass: process.env.SMTP_PASSWORD,
             },
           },
-        ],
-      },
+        },
+      ],
     },
-  ],
+  },
+],
 })
