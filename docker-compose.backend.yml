@@ -1,0 +1,20 @@
+version: '3'
+services:
+  medusa-backend:
+    container_name: medusa-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      - NODE_ENV=production
+      # Dokploy will inject the values for these
+      - DATABASE_URL
+      - REDIS_URL
+      - JWT_SECRET
+      - COOKIE_SECRET
+      - ADMIN_CORS
+      - STORE_CORS
+      - DATABASE_TYPE=postgres
