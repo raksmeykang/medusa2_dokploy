@@ -21,4 +21,5 @@ COPY . .
 RUN yarn build
 
 EXPOSE 9000
-CMD ["sh", "-c", "yarn medusa db:migrate && yarn start"]
+# This version uses the "Shell form" so Docker knows how to handle the &&
+CMD yarn medusa db:migrate && yarn start
