@@ -59,7 +59,7 @@ No preset selected
 ```
 .Regex:
 ```
-^https?://admin.domain.com (admin link)
+^https?://admin.domain.com
 ```
 .Replacement:
 ```
@@ -70,7 +70,7 @@ https://admin.doamin.com/app/
 ON
 ```
 
-.**Congratulations** now your Admin works without type /app
-.**Final Admin url:** https://admin.domain.com or https://admin.domain.com/app
+. **Congratulations** now your Admin works without type /app
+. **Final Admin url:** https://admin.domain.com or https://admin.domain.com/app
 
 
