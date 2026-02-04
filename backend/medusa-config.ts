@@ -21,7 +21,7 @@ module.exports = defineConfig({
     // This allows Dokploy to control if the admin builds or not
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
   },
-  modules: [
+ modules: [
     {
       resolve: "@medusajs/medusa/event-bus-redis",
       options: {
@@ -31,7 +31,9 @@ module.exports = defineConfig({
     {
       resolve: "@medusajs/medusa/workflow-engine-redis",
       options: {
-        redisUrl: process.env.REDIS_URL,
+        redis: {
+          url: process.env.REDIS_URL, // <--- This nested 'url' fixes the crash
+        },
       },
     },
   ],
