@@ -18,36 +18,7 @@ module.exports = defineConfig({
     }
   },
   admin: {
+    // This allows Dokploy to control if the admin builds or not
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
-  },
-  modules: [
-    {
-      resolve: "@medusajs/medusa/event-bus-redis",
-      options: {
-        redisUrl: process.env.REDIS_URL,
-      },
-    },
-    {
-      resolve: "@medusajs/medusa/workflow-engine-redis",
-      options: {
-        redis: {
-          url: process.env.REDIS_URL,
-        },
-      },
-    },
-    {
-      resolve: "@medusajs/medusa/notification",
-      options: {
-        providers: [
-          {
-            resolve: "./src/modules/smtp-notification",
-            id: "smtp",
-            options: {
-              channels: ["email"],
-            },
-          },
-        ],
-      },
-    },
-  ],
+  }
 })
