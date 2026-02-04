@@ -40,19 +40,10 @@ module.exports = defineConfig({
       options: {
         providers: [
           {
-            resolve: "@medusajs/medusa/notification-smtp", 
+            resolve: "./src/modules/smtp-notification",
             id: "smtp",
             options: {
               channels: ["email"],
-              from: process.env.SMTP_USER,
-              transport: {
-                host: process.env.SMTP_HOST,
-                port: parseInt(process.env.SMTP_PORT || "587"),
-                auth: {
-                  user: process.env.SMTP_USER,
-                  pass: process.env.SMTP_PASSWORD,
-                },
-              },
             },
           },
         ],
