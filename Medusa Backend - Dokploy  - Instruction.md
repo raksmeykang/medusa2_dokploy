@@ -36,27 +36,26 @@ Detailed instructions for deploying the Medusa backend using Dokploy.
 12. **Environment**: 
     > **Note:** make sure add `sslmode=disable` at the end of postgres url.
 
-    ```env
-    DATABASE_URL=postgresql://postgres:...5432/postgres?sslmode=disable
+   ```env
+   #Postgres
+   DATABASE_URL=postgresql://postgres:...5432/postgres?sslmode=disable
+   # Redis
+   REDIS_URL=redis://default:...:6379
+   MEDUSA_CACHE_REDIS_URL=redis://default:...:6379
+   # Secrets
+   SESSION_SECRET=long-secure-session-secret-123
+   JWT_SECRET=strong-jwt-secret-for-medusa-backend
+   COOKIE_SECRET=strong-jwt-secret-for-medusa-backend
 
-    # Redis
-    REDIS_URL=redis://default:...:6379
-    MEDUSA_CACHE_REDIS_URL=redis://default:...:6379
-
-    # Secrets
-    SESSION_SECRET=long-secure-session-secret-123
-    JWT_SECRET=strong-jwt-secret-for-medusa-backend
-    COOKIE_SECRET=strong-jwt-secret-for-medusa-backend
-
-    # CORS Settings
+   # CORS Settings
    STORE_CORS=https://nokor24.com,https://www.nokor24.com
    ADMIN_CORS=https://admin.nokor24.com
    AUTH_CORS=https://nokor24.com,https://www.nokor24.com,https://admin.nokor24.com
 
-    # Admin Control (CRITICAL: Set to true for this instance)
-    DISABLE_MEDUSA_ADMIN=true
+   # Admin Control (CRITICAL: Set to true for this instance)
+   DISABLE_MEDUSA_ADMIN=true
 
-    ```
+   ```
 
 13. **Domain**:
     * **Host** = `api.domain.com`
