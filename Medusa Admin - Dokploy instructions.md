@@ -44,3 +44,30 @@ HOST=0.0.0.0
 - Go back to **General Tab**  
 - Deploy Setting \-\> **Deploy**
 
+Your Admin is ready at https://admin.domain.com/app
+
+### Redirect domain (optional)
+
+15- **Advanced tab**
+
+- Scroll down to **Redirects**  
+- **Add** redirect
+
+.Preset:
+```
+No preset selected
+```
+.Regex:
+```
+^https?://admin.domain.com (admin link)
+```
+.Replacement:
+```
+https://admin.doamin.com/app/
+```
+.Permanent:
+```
+ON
+```
+
+
