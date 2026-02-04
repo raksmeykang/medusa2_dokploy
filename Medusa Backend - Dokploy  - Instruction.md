@@ -55,6 +55,7 @@ Detailed instructions for deploying the Medusa backend using Dokploy.
 
     # Admin Control (CRITICAL: Set to true for this instance)
     DISABLE_MEDUSA_ADMIN=true
+
     ```
 
 13. **Domain**:
