@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@medusajs/event-bus-redis": "^2.13.1",
+    "@medusajs/workflow-engine-redis": "^2.13.1"
+  }
+}
