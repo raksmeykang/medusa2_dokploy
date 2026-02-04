@@ -49,9 +49,9 @@ Detailed instructions for deploying the Medusa backend using Dokploy.
     COOKIE_SECRET=strong-jwt-secret-for-medusa-backend
 
     # CORS Settings
-    STORE_CORS=[https://domain.com](https://domain.com),[https://www.domain.com](https://www.domain.com)
-    ADMIN_CORS=[https://admin.domain.com](https://admin.domain.com)
-    AUTH_CORS=[https://domain.com](https://domain.com),[https://www.domain.com](https://www.domain.com),[https://admin.domain.com](https://admin.domain.com)
+   STORE_CORS=https://nokor24.com,https://www.nokor24.com
+   ADMIN_CORS=https://admin.nokor24.com
+   AUTH_CORS=https://nokor24.com,https://www.nokor24.com,https://admin.nokor24.com
 
     # Admin Control (CRITICAL: Set to true for this instance)
     DISABLE_MEDUSA_ADMIN=true
