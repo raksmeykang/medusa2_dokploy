@@ -33,28 +33,13 @@ module.exports = defineConfig({
       },
     },
     {
-  resolve: "@medusajs/medusa/notification",
+  {
+  resolve: "@medusajs/medusa/workflow-engine-redis",
   options: {
-    providers: [
-      {
-        resolve: "./src/modules/notification/providers/smtp-provider", 
-        id: "smtp",
-        options: {
-          channels: ["email"],
-          // This "from" property is now passed into the provider constructor
-          from: process.env.SMTP_FROM, 
-          transport: {
-            host: process.env.SMTP_HOST,
-            port: parseInt(process.env.SMTP_PORT || "465"),
-            auth: {
-              user: process.env.SMTP_USER,
-              pass: process.env.SMTP_PASSWORD,
-            },
-          },
-        },
-      },
-    ],
+    redis: {
+      redisUrl: process.env.REDIS_URL + "?family=0", // Changed 'url' to 'redisUrl'
+    },
   },
-}
+},
   ],
 })
