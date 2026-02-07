@@ -19,47 +19,16 @@ module.exports = defineConfig({
   },
   admin: {
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
-    // This is the CRITICAL fix for the white screen
-    path: "/", 
+    path: "/", // Critical: Removes /app prefix
   },
   modules: [
     {
       resolve: "@medusajs/medusa/event-bus-redis",
-      options: {
-        redisUrl: process.env.REDIS_URL + "?family=0",
-      },
+      options: { redisUrl: process.env.REDIS_URL + "?family=0" },
     },
     {
       resolve: "@medusajs/medusa/workflow-engine-redis",
-      options: {
-        redis: {
-          redisUrl: process.env.REDIS_URL + "?family=0",
-        },
-      },
-    },
-    {
-      resolve: "@medusajs/medusa/notification",
-      options: {
-        providers: [
-          {
-            resolve: "./src/modules/notification/providers/smtp-provider",
-            id: "smtp",
-            options: {
-              channels: ["email"],
-              from: process.env.SMTP_FROM,
-              transport: {
-                host: process.env.SMTP_HOST,
-                port: parseInt(process.env.SMTP_PORT || "465"),
-                auth: {
-                  user: process.env.SMTP_USER,
-                  pass: process.env.SMTP_PASSWORD,
-                },
-                secure: process.env.SMTP_PORT === "465", 
-              },
-            },
-          },
-        ],
-      },
+      options: { redis: { redisUrl: process.env.REDIS_URL + "?family=0" } },
     },
   ],
 })

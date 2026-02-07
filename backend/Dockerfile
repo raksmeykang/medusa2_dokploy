@@ -5,10 +5,10 @@ RUN apk add --no-cache python3 make g++
 RUN corepack enable && corepack prepare yarn@stable --activate
 ENV YARN_NODE_LINKER=node-modules
 
-COPY backend/package.json backend/yarn.lock* ./
+COPY package.json yarn.lock* ./
 RUN yarn install
 
-COPY backend/ .
+COPY . .
 
 RUN yarn medusa build
 
