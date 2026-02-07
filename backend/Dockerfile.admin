@@ -18,7 +18,7 @@ ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
 
 # 4. Build the Admin with an explicit root path
 # This removes the need for the "/app" prefix in URLs
-RUN yarn medusa build --admin-only
+RUN yarn medusa build --admin-only --path /
 
 # 5. Formalize 'serve' installation to avoid download lags
 RUN yarn add serve
