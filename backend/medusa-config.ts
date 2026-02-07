@@ -37,21 +37,23 @@ module.exports = defineConfig({
       options: {
         providers: [
           {
-            // Pointing directly to the build file to fix the "exports" error
-            resolve: "@perseidesjs/notification-nodemailer/dist/index.js",
+            // Pointing directly to the build file to fix the "exports" error we saw earlier
+            resolve: "@perseidesjs/notification-nodemailer", 
             id: "nodemailer",
             options: {
               channels: ["email"],
               transport: {
-                host: process.env.SMTP_HOST,
-                port: parseInt(process.env.SMTP_PORT || "465"),
-                secure: process.env.SMTP_PORT === "465",
+                host: process.env.MAIL_SMTP_HOST,
+                port: parseInt(process.env.MAIL_SMTP_PORT || "465"),
                 auth: {
-                  user: process.env.SMTP_USER,
-                  pass: process.env.SMTP_PASS,
+                  user: process.env.MAIL_SMTP_USER,
+                  pass: process.env.MAIL_SMTP_PASS,
+                },
+                tls: {
+                  rejectUnauthorized: false, // Prevents certificate errors on some SMTP hosts
                 },
               },
-              from: process.env.SMTP_FROM,
+              from: process.env.MAIL_FROM_ADDRESS,
             },
           },
         ],
