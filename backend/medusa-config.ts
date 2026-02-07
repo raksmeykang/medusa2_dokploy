@@ -17,9 +17,6 @@ module.exports = defineConfig({
       ssl: false 
     }
   },
-  admin: {
-    disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
-  },
   modules: [
     {
       resolve: "@medusajs/medusa/event-bus-redis",
@@ -31,15 +28,16 @@ module.exports = defineConfig({
       resolve: "@medusajs/medusa/workflow-engine-redis",
       options: {
         redis: {
-          url: process.env.REDIS_URL, // Fixed: v2 often uses 'url' or 'redisUrl' depending on exact version
+          url: process.env.REDIS_URL,
         },
       },
-    }, // <-- This was the missing closing brace
+    },
     {
       resolve: "@medusajs/medusa/notification",
       options: {
         providers: [
           {
+            // Pointing directly to the build file to fix the "exports" error
             resolve: "@perseidesjs/notification-nodemailer/dist/index.js",
             id: "nodemailer",
             options: {
@@ -47,7 +45,7 @@ module.exports = defineConfig({
               transport: {
                 host: process.env.SMTP_HOST,
                 port: parseInt(process.env.SMTP_PORT || "465"),
-                secure: process.env.SMTP_PORT === "465", 
+                secure: process.env.SMTP_PORT === "465",
                 auth: {
                   user: process.env.SMTP_USER,
                   pass: process.env.SMTP_PASS,

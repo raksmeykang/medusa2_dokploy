@@ -26,6 +26,7 @@
     "@medusajs/cli": "2.13.1",
     "@medusajs/framework": "2.13.1",
     "@medusajs/medusa": "2.13.1",
+    "@perseidesjs/notification-nodemailer": "^3.1.1",
     "nodemailer": "^7.0.13"
   },
   "devDependencies": {
