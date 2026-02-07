@@ -14,12 +14,15 @@ class SmtpNotificationProviderService extends AbstractNotificationProviderServic
   protected transporter_: nodemailer.Transporter
   protected config_: any
 
-  constructor({ logger }: { logger: Logger }, options: any) {
-    super()
-    this.config_ = options
-    this.transporter_ = nodemailer.createTransport(options.transport)
-  }
-
+ constructor({ logger }: { logger: Logger }, options: any) {
+  super()
+  this.config_ = options // Options contains 'from' and 'transport'
+  this.transporter_ = nodemailer.createTransport({
+    ...options.transport,
+    // Add this to ensure Gmail/SSL works on port 465
+    secure: options.transport.port === 465 
+  })
+}
   async send(
     notification: ProviderSendNotificationDTO
   ): Promise<ProviderSendNotificationResultsDTO> {
