@@ -18,20 +18,48 @@ module.exports = defineConfig({
     },
   },
   admin: {
-    // This is the "Rock" part: explicitly disable or enable based on ENV
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
-    // This removes the /app prefix so your domain works at the root
+    // This is the CRITICAL fix for the white screen
     path: "/", 
   },
   modules: [
     {
       resolve: "@medusajs/medusa/event-bus-redis",
-      options: { redisUrl: process.env.REDIS_URL + "?family=0" },
+      options: {
+        redisUrl: process.env.REDIS_URL + "?family=0",
+      },
     },
     {
       resolve: "@medusajs/medusa/workflow-engine-redis",
-      options: { redis: { redisUrl: process.env.REDIS_URL + "?family=0" } },
+      options: {
+        redis: {
+          redisUrl: process.env.REDIS_URL + "?family=0",
+        },
+      },
     },
-    // ... rest of your modules (notification, etc)
+    {
+      resolve: "@medusajs/medusa/notification",
+      options: {
+        providers: [
+          {
+            resolve: "./src/modules/notification/providers/smtp-provider",
+            id: "smtp",
+            options: {
+              channels: ["email"],
+              from: process.env.SMTP_FROM,
+              transport: {
+                host: process.env.SMTP_HOST,
+                port: parseInt(process.env.SMTP_PORT || "465"),
+                auth: {
+                  user: process.env.SMTP_USER,
+                  pass: process.env.SMTP_PASSWORD,
+                },
+                secure: process.env.SMTP_PORT === "465", 
+              },
+            },
+          },
+        ],
+      },
+    },
   ],
 })
