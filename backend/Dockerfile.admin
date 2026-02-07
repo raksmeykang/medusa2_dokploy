@@ -5,7 +5,7 @@ RUN apk add --no-cache python3 make g++
 RUN corepack enable && corepack prepare yarn@stable --activate
 ENV YARN_NODE_LINKER=node-modules
 
-# 1. Install dependencies using Yarn
+# 1. Install dependencies
 COPY backend/package.json backend/yarn.lock* ./
 RUN yarn install
 
@@ -16,13 +16,14 @@ COPY backend/ .
 ARG MEDUSA_BACKEND_URL=https://api.nokor24.com
 ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
 
-# 4. Build the Admin static files
+# 4. Build the Admin with an explicit root path
+# This removes the need for the "/app" prefix in URLs
 RUN yarn medusa build --admin-only
 
-# 5. Use Yarn to add 'serve' and start it
-# We add it to the container's global bin or use it via 'yarn dlx'
+# 5. Formalize 'serve' installation to avoid download lags
+RUN yarn add serve
+
 EXPOSE 9000
 
-# Using 'yarn dlx' is the cleanest way to run 'serve' without 
-# permanently modifying your package.json
-CMD ["yarn", "dlx", "serve", "-s", ".medusa/admin", "-l", "9000"]
+# We serve the folder, but we must handle the SPA routing correctly
+CMD ["yarn", "serve", "-s", ".medusa/admin", "-l", "9000"]
