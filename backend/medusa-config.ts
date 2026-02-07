@@ -14,32 +14,46 @@ module.exports = defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
     databaseDriverOptions: { 
-      ssl: false 
+      connection: { ssl: { rejectUnauthorized: false } } 
     }
   },
   modules: [
     {
       resolve: "@medusajs/medusa/event-bus-redis",
       options: {
-        redisUrl: process.env.REDIS_URL,
+        redisUrl: process.env.REDIS_URL + "?family=0",
       },
     },
     {
       resolve: "@medusajs/medusa/workflow-engine-redis",
       options: {
         redis: {
-          url: process.env.REDIS_URL,
+          redisUrl: process.env.REDIS_URL + "?family=0", // Use redisUrl, not url
         },
       },
     },
     {
-  {
-  resolve: "@medusajs/medusa/workflow-engine-redis",
-  options: {
-    redis: {
-      redisUrl: process.env.REDIS_URL + "?family=0", // Changed 'url' to 'redisUrl'
+      resolve: "@medusajs/medusa/notification",
+      options: {
+        providers: [
+          {
+            resolve: "./src/modules/notification/providers/smtp-provider", 
+            id: "smtp",
+            options: {
+              channels: ["email"],
+              from: process.env.SMTP_FROM, // Controlled by your Dokploy Env
+              transport: {
+                host: process.env.SMTP_HOST,
+                port: parseInt(process.env.SMTP_PORT || "465"),
+                auth: {
+                  user: process.env.SMTP_USER,
+                  pass: process.env.SMTP_PASSWORD,
+                },
+              },
+            },
+          },
+        ],
+      },
     },
-  },
-},
   ],
 })
