@@ -35,30 +35,27 @@ module.exports = defineConfig({
       },
     },
     {
-      resolve: "@medusajs/medusa/notification",
-      options: {
-        providers: [
-          {
-            // Matching the path in your screenshot exactly
-            resolve: "./src/modules/notification/providers/smtp-provider", 
-            id: "smtp",
-            options: {
-              channels: ["email"],
-              from: process.env.SMTP_FROM,
-              transport: {
-                host: process.env.SMTP_HOST,
-                port: parseInt(process.env.SMTP_PORT || "465"),
-                auth: {
-                  user: process.env.SMTP_USER,
-                  pass: process.env.SMTP_PASSWORD,
-                },
-                // Use secure: true for port 465
-                secure: process.env.SMTP_PORT === "465", 
-              },
+  resolve: "@medusajs/medusa/notification",
+  options: {
+    providers: [
+      {
+        resolve: "./src/modules/notification/providers/smtp-provider",
+        id: "smtp",
+        options: {
+          channels: ["email"],
+          from: process.env.SMTP_FROM, // Maps to SMTP_FROM in ENV
+          transport: {
+            host: process.env.SMTP_HOST,
+            port: parseInt(process.env.SMTP_PORT || "465"),
+            auth: {
+              user: process.env.SMTP_USER,
+              pass: process.env.SMTP_PASSWORD,
             },
           },
-        ],
+        },
       },
-    },
+    ],
+  },
+}
   ],
 })
