@@ -31,8 +31,32 @@ module.exports = defineConfig({
       resolve: "@medusajs/medusa/workflow-engine-redis",
       options: {
         redis: {
-          redisUrl: process.env.REDIS_URL,
+          url: process.env.REDIS_URL, // Fixed: v2 often uses 'url' or 'redisUrl' depending on exact version
         },
+      },
+    }, // <-- This was the missing closing brace
+    {
+      resolve: "@medusajs/medusa/notification",
+      options: {
+        providers: [
+          {
+            resolve: "@perseidesjs/notification-nodemailer",
+            id: "nodemailer",
+            options: {
+              channels: ["email"],
+              transport: {
+                host: process.env.SMTP_HOST,
+                port: parseInt(process.env.SMTP_PORT || "465"),
+                secure: process.env.SMTP_PORT === "465", 
+                auth: {
+                  user: process.env.SMTP_USER,
+                  pass: process.env.SMTP_PASS,
+                },
+              },
+              from: process.env.SMTP_FROM,
+            },
+          },
+        ],
       },
     },
   ],
