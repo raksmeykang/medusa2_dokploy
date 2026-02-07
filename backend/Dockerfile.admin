@@ -5,25 +5,24 @@ RUN apk add --no-cache python3 make g++
 RUN corepack enable && corepack prepare yarn@stable --activate
 ENV YARN_NODE_LINKER=node-modules
 
-# 1. Install dependencies
+# 1. Install dependencies using Yarn
 COPY backend/package.json backend/yarn.lock* ./
 RUN yarn install
 
 # 2. Copy source
 COPY backend/ .
 
-# 3. Inject the Backend URL for the static build
+# 3. Inject the Backend URL
 ARG MEDUSA_BACKEND_URL=https://api.nokor24.com
 ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
 
-# 4. Build the Admin static files (Medusa v2 syntax)
-RUN npx medusa build --admin-only
+# 4. Build the Admin static files
+RUN yarn medusa build --admin-only
 
-# 5. Install a lightweight static server
-RUN npm install -g serve
-
-# Keep it on 9000 to match your existing Dokploy configuration
+# 5. Use Yarn to add 'serve' and start it
+# We add it to the container's global bin or use it via 'yarn dlx'
 EXPOSE 9000
 
-# Serve the build folder as a Single Page App (-s) on port 9000
-CMD ["serve", "-s", ".medusa/admin", "-l", "9000"]
+# Using 'yarn dlx' is the cleanest way to run 'serve' without 
+# permanently modifying your package.json
+CMD ["yarn", "dlx", "serve", "-s", ".medusa/admin", "-l", "9000"]
