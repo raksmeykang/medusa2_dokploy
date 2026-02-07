@@ -3,22 +3,24 @@ WORKDIR /app
 
 RUN apk add --no-cache python3 make g++
 RUN corepack enable && corepack prepare yarn@stable --activate
+# This ensures a physical node_modules is created for the 'serve' tool later
 ENV YARN_NODE_LINKER=node-modules
 
 # 1. Copy and Install
 COPY . .
 RUN yarn install
 
-# 2. The Absolute Build (No "npx" or "yarn" lookup required)
+# 2. The Build Command
 ARG MEDUSA_BACKEND_URL=https://api.nokor24.com
 ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
 
-# We use the direct path to the binary installed by Yarn
-RUN ./node_modules/.bin/medusa build --admin-only
+# 'yarn exec' is the most reliable way to run the local medusa binary in Yarn 4
+RUN yarn exec medusa build --admin-only
 
-# 3. Add serve using Yarn
+# 3. Add serve
 RUN yarn add serve
 
 EXPOSE 9000
 
-CMD ["./node_modules/.bin/serve", "-s", ".medusa/admin", "-l", "9000"]
+# Use yarn exec for the runtime as well
+CMD ["yarn", "exec", "serve", "--", "-s", ".medusa/admin", "-l", "9000"]
