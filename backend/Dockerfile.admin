@@ -1,26 +1,26 @@
 FROM node:20-alpine
 WORKDIR /app
 
-# Install build dependencies
 RUN apk add --no-cache python3 make g++
-
-# Enable Corepack for Yarn Berry
 RUN corepack enable && corepack prepare yarn@stable --activate
 ENV YARN_NODE_LINKER=node-modules
 
-# 1. Install all dependencies in the root first
+# 1. Install dependencies
 COPY backend/package.json backend/yarn.lock* ./
 RUN yarn install
 
-# 2. Copy source and build the application
+# 2. Copy source
 COPY backend/ .
-RUN yarn medusa build
 
-# 3. Final Step: Install dependencies inside the production build folder
-WORKDIR /app/.medusa/server
-RUN yarn install
+# 3. CRITICAL: Inject the Backend URL at build time
+# Without this, the Admin UI will try to connect to localhost:9000
+ARG MEDUSA_BACKEND_URL=https://api.nokor24.com
+ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
 
-EXPOSE 9000
+# 4. Build the Admin
+RUN npx medusa build admin
 
-# Start the server from the production-ready directory
-CMD ["yarn", "medusa", "start"]
+# 5. Serve the Admin
+# We use 'admin serve' instead of 'start' to avoid full backend boot
+EXPOSE 7001
+CMD ["npx", "medusa", "admin", "serve", "--port", "7001"]
