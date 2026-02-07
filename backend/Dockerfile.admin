@@ -5,21 +5,21 @@ RUN apk add --no-cache python3 make g++
 RUN corepack enable && corepack prepare yarn@stable --activate
 ENV YARN_NODE_LINKER=node-modules
 
-# 1. Copy everything to satisfy Yarn Berry
+# 1. Use Yarn to install everything (fast and cached)
 COPY . .
-
-# 2. Install
 RUN yarn install
 
-# 3. Environment for build
+# 2. Hybrid Build: Attempt yarn run first, fallback to npx if yarn fails
+# This is the "mix" you asked for to ensure it never crashes
 ARG MEDUSA_BACKEND_URL=https://api.nokor24.com
 ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
 
-# 4. Correct Yarn command to run the local binary
-RUN yarn run medusa build --admin-only
+RUN yarn medusa build --admin-only || npx medusa build --admin-only
 
-# 5. Add serve and host
+# 3. Add serve using Yarn
 RUN yarn add serve
 
 EXPOSE 9000
+
+# Use yarn to serve
 CMD ["yarn", "serve", "-s", ".medusa/admin", "-l", "9000"]
