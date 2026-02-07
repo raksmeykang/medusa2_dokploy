@@ -5,22 +5,21 @@ RUN apk add --no-cache python3 make g++
 RUN corepack enable && corepack prepare yarn@stable --activate
 ENV YARN_NODE_LINKER=node-modules
 
-# 1. Copy ALL files first to satisfy Yarn workspace requirements
+# 1. Copy everything to satisfy Yarn Berry
 COPY . .
 
-# 2. Install dependencies (Yarn will now see the lockfile and package.json correctly)
+# 2. Install
 RUN yarn install
 
-# 3. Inject the Backend URL
+# 3. Environment for build
 ARG MEDUSA_BACKEND_URL=https://api.nokor24.com
 ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
 
-# 4. Build the Admin
-RUN yarn medusa build --admin-only
+# 4. Correct Yarn command to run the local binary
+RUN yarn run medusa build --admin-only
 
-# 5. Add serve
+# 5. Add serve and host
 RUN yarn add serve
 
 EXPOSE 9000
-
 CMD ["yarn", "serve", "-s", ".medusa/admin", "-l", "9000"]
