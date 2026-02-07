@@ -37,8 +37,8 @@ module.exports = defineConfig({
       options: {
         providers: [
           {
-            // Pointing directly to the build file to bypass ESM export issues
-            resolve: "@perseidesjs/notification-nodemailer", 
+            // Point to your local file instead of the package name
+            resolve: "./src/modules/notification/providers/nodemailer.ts", 
             id: "nodemailer",
             options: {
               channels: ["email"],
