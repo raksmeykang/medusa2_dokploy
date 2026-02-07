@@ -2289,6 +2289,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lumot-eu/medusa-plugin-nodemailer@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@lumot-eu/medusa-plugin-nodemailer@npm:1.0.6"
+  dependencies:
+    handlebars: "npm:^4.7.8"
+    medusa-core-utils: "npm:^1.1.30"
+    nodemailer: "npm:^6.9.13"
+    nodemailer-express-handlebars: "npm:6.0.0"
+    tsimportlib: "npm:^0.0.5"
+  peerDependencies:
+    "@medusajs/medusa": ^1.20.10
+    medusa-interfaces: ^1.3.9
+  checksum: 10c0/8161c1cab9dcd32b2867ae04e8b02b7f55126ae496eaeb027efc690004363876fa0409bb52b3b89418b992c216855e277d8379b5b42f8a790ae288990246aba3
+  languageName: node
+  linkType: hard
+
 "@medusajs/admin-bundler@npm:2.13.1":
   version: 2.13.1
   resolution: "@medusajs/admin-bundler@npm:2.13.1"
@@ -9009,7 +9025,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"awilix@npm:^8.0.1":
+"awilix@npm:^8.0.0, awilix@npm:^8.0.1":
   version: 8.0.1
   resolution: "awilix@npm:8.0.1"
   dependencies:
@@ -9226,6 +9242,15 @@ __metadata:
     balanced-match: "npm:^1.0.0"
     concat-map: "npm:0.0.1"
   checksum: 10c0/975fecac2bb7758c062c20d0b3b6288c7cc895219ee25f0a64a9de662dbac981ff0b6e89909c3897c1f84fa353113a721923afdec5f8b2350255b097f12b1f73
+  languageName: node
+  linkType: hard
+
+"brace-expansion@npm:^2.0.1":
+  version: 2.0.2
+  resolution: "brace-expansion@npm:2.0.2"
+  dependencies:
+    balanced-match: "npm:^1.0.0"
+  checksum: 10c0/6d117a4c793488af86b83172deb6af143e94c17bc53b0b3cec259733923b4ca84679d506ac261f4ba3c7ed37c46018e2ff442f9ce453af8643ecd64f4a54e6cf
   languageName: node
   linkType: hard
 
@@ -10639,6 +10664,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"express-handlebars@npm:^6.0.0":
+  version: 6.0.7
+  resolution: "express-handlebars@npm:6.0.7"
+  dependencies:
+    glob: "npm:^8.1.0"
+    graceful-fs: "npm:^4.2.10"
+    handlebars: "npm:^4.7.7"
+  checksum: 10c0/47a38f34d7185686dbaaf5d684249cca1a676f5bad8b5c46d2dd9363b0ac0a3a613f7c205b0df8677d30b3916c71c582b742e095f858c113914de20047b48f3a
+  languageName: node
+  linkType: hard
+
 "express-session@npm:^1.17.3":
   version: 1.19.0
   resolution: "express-session@npm:1.19.0"
@@ -11189,6 +11225,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"glob@npm:^8.1.0":
+  version: 8.1.0
+  resolution: "glob@npm:8.1.0"
+  dependencies:
+    fs.realpath: "npm:^1.0.0"
+    inflight: "npm:^1.0.4"
+    inherits: "npm:2"
+    minimatch: "npm:^5.0.1"
+    once: "npm:^1.3.0"
+  checksum: 10c0/cb0b5cab17a59c57299376abe5646c7070f8acb89df5595b492dba3bfb43d301a46c01e5695f01154e6553168207cb60d4eaf07d3be4bc3eb9b0457c5c561d0f
+  languageName: node
+  linkType: hard
+
 "globals@npm:^11.1.0":
   version: 11.12.0
   resolution: "globals@npm:11.12.0"
@@ -11217,7 +11266,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
+"graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.10, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
   version: 4.2.11
   resolution: "graceful-fs@npm:4.2.11"
   checksum: 10c0/386d011a553e02bc594ac2ca0bd6d9e4c22d7fa8cfbfc448a6d148c59ea881b092db9dbe3547ae4b88e55f1b01f7c4a2ecc53b310c042793e63aa44cf6c257f2
@@ -11239,6 +11288,24 @@ __metadata:
   version: 16.12.0
   resolution: "graphql@npm:16.12.0"
   checksum: 10c0/b6fffa4e8a4e4a9933ebe85e7470b346dbf49050c1a482fac5e03e4a1a7bed2ecd3a4c97e29f04457af929464bc5e4f2aac991090c2f320111eef26e902a5c75
+  languageName: node
+  linkType: hard
+
+"handlebars@npm:^4.7.7, handlebars@npm:^4.7.8":
+  version: 4.7.8
+  resolution: "handlebars@npm:4.7.8"
+  dependencies:
+    minimist: "npm:^1.2.5"
+    neo-async: "npm:^2.6.2"
+    source-map: "npm:^0.6.1"
+    uglify-js: "npm:^3.1.4"
+    wordwrap: "npm:^1.0.0"
+  dependenciesMeta:
+    uglify-js:
+      optional: true
+  bin:
+    handlebars: bin/handlebars
+  checksum: 10c0/7aff423ea38a14bb379316f3857fe0df3c5d66119270944247f155ba1f08e07a92b340c58edaa00cfe985c21508870ee5183e0634dcb53dd405f35c93ef7f10d
   languageName: node
   linkType: hard
 
@@ -12876,10 +12943,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"medusa-core-utils@npm:^1.1.30":
+  version: 1.2.3
+  resolution: "medusa-core-utils@npm:1.2.3"
+  dependencies:
+    awilix: "npm:^8.0.0"
+  checksum: 10c0/8547b2bd6cf51e155885bdbb622b2897035b1369a7b758158a2c71df0b349f5dc23d664a23db1a8654306bf08226d483efd75829cbc232980574af8097147e02
+  languageName: node
+  linkType: hard
+
 "medusa-starter-default@workspace:.":
   version: 0.0.0-use.local
   resolution: "medusa-starter-default@workspace:."
   dependencies:
+    "@lumot-eu/medusa-plugin-nodemailer": "npm:^1.0.6"
     "@medusajs/admin-sdk": "npm:2.13.1"
     "@medusajs/cli": "npm:2.13.1"
     "@medusajs/framework": "npm:2.13.1"
@@ -13007,7 +13084,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimist@npm:^1.2.6":
+"minimatch@npm:^5.0.1":
+  version: 5.1.6
+  resolution: "minimatch@npm:5.1.6"
+  dependencies:
+    brace-expansion: "npm:^2.0.1"
+  checksum: 10c0/3defdfd230914f22a8da203747c42ee3c405c39d4d37ffda284dac5e45b7e1f6c49aa8be606509002898e73091ff2a3bbfc59c2c6c71d4660609f63aa92f98e3
+  languageName: node
+  linkType: hard
+
+"minimist@npm:^1.2.5, minimist@npm:^1.2.6":
   version: 1.2.8
   resolution: "minimist@npm:1.2.8"
   checksum: 10c0/19d3fcdca050087b84c2029841a093691a91259a47def2f18222f41e7645a0b7c44ef4b40e88a1e58a40c84d2ef0ee6047c55594d298146d0eb3f6b737c20ce6
@@ -13306,6 +13392,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"neo-async@npm:^2.6.2":
+  version: 2.6.2
+  resolution: "neo-async@npm:2.6.2"
+  checksum: 10c0/c2f5a604a54a8ec5438a342e1f356dff4bc33ccccdb6dc668d94fe8e5eccfc9d2c2eea6064b0967a767ba63b33763f51ccf2cd2441b461a7322656c1f06b3f5d
+  languageName: node
+  linkType: hard
+
 "no-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "no-case@npm:3.0.4"
@@ -13401,6 +13494,22 @@ __metadata:
     long-timeout: "npm:0.1.1"
     sorted-array-functions: "npm:^1.3.0"
   checksum: 10c0/6ec51b34b9e676740ac25298e4ced5ee46053379f0d3aad533e51d7e083bc24ced045df1772a95bf9d9cfdb81299340bbf551549a7c5eb6e4d2dc6468c85c70e
+  languageName: node
+  linkType: hard
+
+"nodemailer-express-handlebars@npm:6.0.0":
+  version: 6.0.0
+  resolution: "nodemailer-express-handlebars@npm:6.0.0"
+  dependencies:
+    express-handlebars: "npm:^6.0.0"
+  checksum: 10c0/23085d9b2f5bf888a7f1dba7f1e022edd49a1bdbd8b2cecfc852ff0a817d0176c73f138119bb3c4a62d4dacbeae278eee0fc905a4072446a5489ebba8da11ae8
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:^6.9.13":
+  version: 6.10.1
+  resolution: "nodemailer@npm:6.10.1"
+  checksum: 10c0/e81fde258ea4f4e5646e9e3eebe89294d007939999d2d1a8c96c5488fa00bf659e46cf76fccb2697e9aa6ef9807a1ed47ff2aef6ad30b795e3849b6997066d16
   languageName: node
   linkType: hard
 
@@ -15783,6 +15892,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tsimportlib@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "tsimportlib@npm:0.0.5"
+  checksum: 10c0/2cff8e8c622d32ebe785cc60b62c6b6dc63036d53f95bb16895950d3614a92c027f99ec2f12af469f98b7068f3fb4bf7b3054f29a7a387b2b0f82d3345963d8f
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^1":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
@@ -15884,6 +16000,15 @@ __metadata:
   bin:
     ua-parser-js: script/cli.js
   checksum: 10c0/45dc1f7f3ce8248e0e64640d2e29c65c0ea1fc9cb105594de84af80e2a57bba4f718b9376098ca7a5b0ffe240f8995b0fa3714afa9d36861c41370a378f1a274
+  languageName: node
+  linkType: hard
+
+"uglify-js@npm:^3.1.4":
+  version: 3.19.3
+  resolution: "uglify-js@npm:3.19.3"
+  bin:
+    uglifyjs: bin/uglifyjs
+  checksum: 10c0/83b0a90eca35f778e07cad9622b80c448b6aad457c9ff8e568afed978212b42930a95f9e1be943a1ffa4258a3340fbb899f41461131c05bb1d0a9c303aed8479
   languageName: node
   linkType: hard
 
@@ -16259,6 +16384,13 @@ __metadata:
     triple-beam: "npm:^1.3.0"
     winston-transport: "npm:^4.9.0"
   checksum: 10c0/341a8ccfb726120209d34e2466040e2ca72cadb1a3402c4fc90425facad002b81275675b4ab9b4432a624311bc47ef7c9fb7652c86fca454d2be2f2ee1882226
+  languageName: node
+  linkType: hard
+
+"wordwrap@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "wordwrap@npm:1.0.0"
+  checksum: 10c0/7ed2e44f3c33c5c3e3771134d2b0aee4314c9e49c749e37f464bf69f2bcdf0cbf9419ca638098e2717cff4875c47f56a007532f6111c3319f557a2ca91278e92
   languageName: node
   linkType: hard
 
