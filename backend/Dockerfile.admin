@@ -5,16 +5,20 @@ RUN apk add --no-cache python3 make g++
 RUN corepack enable && corepack prepare yarn@stable --activate
 ENV YARN_NODE_LINKER=node-modules
 
-# We use ./ because the Dockerfile is already inside /backend
-COPY package.json yarn.lock* ./
-RUN yarn install
-
+# 1. Copy ALL files first to satisfy Yarn workspace requirements
 COPY . .
 
+# 2. Install dependencies (Yarn will now see the lockfile and package.json correctly)
+RUN yarn install
+
+# 3. Inject the Backend URL
 ARG MEDUSA_BACKEND_URL=https://api.nokor24.com
 ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
 
+# 4. Build the Admin
 RUN yarn medusa build --admin-only
+
+# 5. Add serve
 RUN yarn add serve
 
 EXPOSE 9000
