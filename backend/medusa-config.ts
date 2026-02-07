@@ -37,8 +37,7 @@ module.exports = defineConfig({
       options: {
         providers: [
           {
-            // Pointing directly to the build file to fix the "exports" error we saw earlier
-            resolve: "@perseidesjs/notification-nodemailer", 
+            resolve: "medusa-notification-nodemailer", 
             id: "nodemailer",
             options: {
               channels: ["email"],
@@ -50,7 +49,7 @@ module.exports = defineConfig({
                   pass: process.env.MAIL_SMTP_PASS,
                 },
                 tls: {
-                  rejectUnauthorized: false, // Prevents certificate errors on some SMTP hosts
+                  rejectUnauthorized: false,
                 },
               },
               from: process.env.MAIL_FROM_ADDRESS,
