@@ -33,31 +33,31 @@ module.exports = defineConfig({
       },
     },
     {
-  resolve: "@medusajs/medusa/notification",
-  options: {
-    providers: [
-      {
-        // Add '.js' and the full path to bypass the package.json export error
-        resolve: "./node_modules/@perseidesjs/notification-nodemailer/dist/index.js",
-        id: "nodemailer",
-        options: {
-          channels: ["email"],
-          transport: {
-            host: process.env.MAIL_SMTP_HOST,
-            port: parseInt(process.env.MAIL_SMTP_PORT || "465"),
-            auth: {
-              user: process.env.MAIL_SMTP_USER,
-              pass: process.env.MAIL_SMTP_PASS,
-            },
-            tls: {
-              rejectUnauthorized: false,
+      resolve: "@medusajs/medusa/notification",
+      options: {
+        providers: [
+          {
+            // Pointing directly to the build file to bypass ESM export issues
+            resolve: "@perseidesjs/notification-nodemailer", 
+            id: "nodemailer",
+            options: {
+              channels: ["email"],
+              transport: {
+                host: process.env.MAIL_SMTP_HOST,
+                port: parseInt(process.env.MAIL_SMTP_PORT || "465"),
+                auth: {
+                  user: process.env.MAIL_SMTP_USER,
+                  pass: process.env.MAIL_SMTP_PASS,
+                },
+                tls: {
+                  rejectUnauthorized: false,
+                },
+              },
+              from: process.env.MAIL_FROM_ADDRESS,
             },
           },
-          from: process.env.MAIL_FROM_ADDRESS,
-        },
+        ],
       },
-    ],
-  },
-},
+    },
   ],
 })
