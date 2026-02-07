@@ -35,14 +35,5 @@ module.exports = defineConfig({
         },
       },
     },
-    {
-      resolve: `@perseidesjs/notification-nodemailer`,
-      options:{
-        host: process.env.MAIL_HOST,
-        port: parseInt(process.env.MAIL_PORT || ""),
-        username: process.env.MAIL_USER,
-        password: process.env.MAIL_PASSWORD
-      },
-    },
   ],
 })
