@@ -36,8 +36,5 @@ class SmtpNotificationProviderService extends AbstractNotificationProviderServic
   }
 }
 
-// CRITICAL FIX: Medusa v2 loader looks for this services array
+// THIS IS THE MISSING PIECE
 export const services = [SmtpNotificationProviderService]
-
-// Also export as default for safety
-export default SmtpNotificationProviderService

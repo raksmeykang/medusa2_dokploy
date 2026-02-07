@@ -20,16 +20,12 @@ module.exports = defineConfig({
   modules: [
     {
       resolve: "@medusajs/medusa/event-bus-redis",
-      options: {
-        redisUrl: process.env.REDIS_URL + "?family=0",
-      },
+      options: { redisUrl: process.env.REDIS_URL + "?family=0" },
     },
     {
       resolve: "@medusajs/medusa/workflow-engine-redis",
       options: {
-        redis: {
-          redisUrl: process.env.REDIS_URL + "?family=0", // Use redisUrl, not url
-        },
+        redis: { redisUrl: process.env.REDIS_URL + "?family=0" },
       },
     },
     {
@@ -41,7 +37,7 @@ module.exports = defineConfig({
             id: "smtp",
             options: {
               channels: ["email"],
-              from: process.env.SMTP_FROM, // Controlled by your Dokploy Env
+              from: process.env.SMTP_FROM,
               transport: {
                 host: process.env.SMTP_HOST,
                 port: parseInt(process.env.SMTP_PORT || "465"),
