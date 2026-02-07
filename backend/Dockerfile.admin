@@ -5,24 +5,17 @@ RUN apk add --no-cache python3 make g++
 RUN corepack enable && corepack prepare yarn@stable --activate
 ENV YARN_NODE_LINKER=node-modules
 
-# 1. Install dependencies
 COPY backend/package.json backend/yarn.lock* ./
 RUN yarn install
 
-# 2. Copy source
 COPY backend/ .
 
-# 3. Build-time argument for the Backend API
 ARG MEDUSA_BACKEND_URL=https://api.nokor24.com
 ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
 
-# 4. Standard Medusa v2 build (reads path: "/" from config)
 RUN yarn medusa build --admin-only
-
-# 5. Add 'serve' globally for reliability
 RUN yarn global add serve
 
 EXPOSE 9000
 
-# Serve the static build from the correct v2 location
 CMD ["serve", "-s", ".medusa/admin", "-l", "9000"]
