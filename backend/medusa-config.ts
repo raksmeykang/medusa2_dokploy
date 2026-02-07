@@ -40,7 +40,7 @@ module.exports = defineConfig({
       options: {
         providers: [
           {
-            resolve: "@perseidesjs/notification-nodemailer",
+            resolve: "@perseidesjs/notification-nodemailer/dist/index.js",
             id: "nodemailer",
             options: {
               channels: ["email"],
