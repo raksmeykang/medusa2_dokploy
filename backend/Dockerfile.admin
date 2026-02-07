@@ -12,15 +12,14 @@ RUN yarn install
 # 2. Copy source
 COPY backend/ .
 
-# 3. CRITICAL: Inject the Backend URL at build time
-# Without this, the Admin UI will try to connect to localhost:9000
+# 3. CRITICAL: Inject the Backend URL for the static build
 ARG MEDUSA_BACKEND_URL=https://api.nokor24.com
 ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
 
-# 4. Build the Admin
-RUN npx medusa build admin
+# 4. Corrected Medusa v2 Build Command
+RUN npx medusa build --admin-only
 
 # 5. Serve the Admin
-# We use 'admin serve' instead of 'start' to avoid full backend boot
+# By default, --admin-only builds to .medusa/admin
 EXPOSE 7001
 CMD ["npx", "medusa", "admin", "serve", "--port", "7001"]
