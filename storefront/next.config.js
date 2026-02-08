@@ -1,6 +1,6 @@
-const checkEnvVariables = require("./check-env-variables")
-
-checkEnvVariables()
+// 1. COMMENT THIS OUT to stop the build from crashing when keys are missing during the Docker build phase
+// const checkEnvVariables = require("./check-env-variables")
+// checkEnvVariables()
 
 /**
  * Medusa Cloud-related environment variables
@@ -12,6 +12,9 @@ const S3_PATHNAME = process.env.MEDUSA_CLOUD_S3_PATHNAME
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
+  // 2. ADD THIS LINE for Docker stability
+  output: 'standalone', 
+  
   reactStrictMode: true,
   logging: {
     fetches: {
