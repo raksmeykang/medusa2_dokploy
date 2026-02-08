@@ -5,7 +5,6 @@ loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 export default defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
-    // Add Redis URL for internal caching and session management
     redisUrl: process.env.REDIS_URL,
     http: {
       storeCors: process.env.STORE_CORS!,
@@ -16,7 +15,7 @@ export default defineConfig({
     }
   },
   admin: {
-    // This allows you to visit admin.nokor24.com/ directly
+    // If you use a dedicated domain like admin.nokor24.com, set path to "/"
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
   },
   modules: [
