@@ -1,27 +1,22 @@
 FROM node:20-alpine AS builder
 
-# 1. DECLARE THE ARGUMENTS (Dokploy injects these here)
+# Declare the ARGs
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_DEFAULT_REGION
 
-# 2. SET THEM AS ENV (Next.js needs them as ENVs during 'yarn build')
-ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
-ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
-ENV NEXT_PUBLIC_DEFAULT_REGION=$NEXT_PUBLIC_DEFAULT_REGION
-
 WORKDIR /app
 COPY . .
+
+# FORCE-CREATE .env file for the build phase
+RUN echo "NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL" > .env &&     echo "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY" >> .env &&     echo "NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL" >> .env &&     echo "NEXT_PUBLIC_DEFAULT_REGION=$NEXT_PUBLIC_DEFAULT_REGION" >> .env
 
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 RUN yarn install
 
-# 3. RUN THE BUILD
+# Now the build will find the .env file we just created
 RUN NEXT_PHASE=phase-production-build yarn build
-
-# ... (rest of your runner stage)
 
 FROM node:20-alpine AS runner
 WORKDIR /app
