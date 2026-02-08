@@ -1,17 +1,24 @@
 # Step 1: Base Image
 FROM node:20-alpine AS base
 RUN apk add --no-cache libc6-compat
-# Enable Corepack to use modern Yarn
-RUN corepack enable && corepack prepare yarn@4.1.0 --activate
+
+# 1. Enable Corepack
+RUN corepack enable
+
+# 2. Set the global version (this overrides the need for a local .cjs file)
+RUN corepack prepare yarn@4.12.0 --activate
 
 # Step 2: Dependencies
 FROM base AS deps
 WORKDIR /app
 
-# Copy yarn configuration and lockfile
-COPY package.json yarn.lock .yarnrc.yml* ./
-# If you have a .yarn folder for plugins/releases, uncomment the next line
-# COPY .yarn ./.yarn
+# 3. Copy only essential config files first
+COPY package.json yarn.lock .yarnrc.yml ./
+
+# --- IMPORTANT FIX ---
+# This command removes the 'yarnPath' line if it exists in your config,
+# forcing Docker to use the Corepack version we just prepared.
+RUN sed -i '/yarnPath/d' .yarnrc.yml
 
 # Install dependencies
 RUN yarn install --immutable
@@ -22,7 +29,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Environment variables needed at build time for Next.js
+# Medusa v2 Environment Variables
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 
@@ -31,15 +38,13 @@ RUN yarn build
 # Step 4: Runner
 FROM base AS runner
 WORKDIR /app
-
 ENV NODE_ENV=production
+ENV PORT 8000
 
-# Copy necessary files from builder
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 8000
-
 CMD ["yarn", "start", "-p", "8000"]
