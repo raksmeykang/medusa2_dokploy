@@ -3,28 +3,23 @@ FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Enable Corepack to use the Yarn version defined in package.json
+# Enable Corepack for Yarn 4
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
-# Copy the configuration files for Yarn 4
 COPY package.json yarn.lock .yarnrc.yml ./
-# Copy the .yarn folder if it exists (contains releases/plugins)
 COPY .yarn ./.yarn 
 
-# In Yarn 4, --immutable is the equivalent of --frozen-lockfile
 RUN yarn install --immutable
 
-# Stage 2: Build the application
+# Stage 2: Build
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Re-enable Corepack for the build stage
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build-time environment variables (Updated to standard format)
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
@@ -32,6 +27,9 @@ ARG NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=${NEXT_PUBLIC_MEDUSA_BACKEND_URL}
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY}
 ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
+
+# This variable helps some Next.js versions ensure standalone is built
+ENV NEXT_PRIVATE_STANDALONE=true
 
 RUN yarn build
 
@@ -43,7 +41,7 @@ ENV NODE_ENV=production
 ENV PORT=8000
 ENV HOSTNAME="0.0.0.0"
 
-# Copy essential files for standalone mode
+# Copy the standalone build
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
