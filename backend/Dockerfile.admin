@@ -1,25 +1,27 @@
-FROM node:20-alpine
-WORKDIR /app
-RUN apk add --no-cache python3 make g++
-RUN corepack enable && corepack prepare yarn@stable --activate
-# This ensures a physical node_modules is created for the 'serve' tool later
-ENV YARN_NODE_LINKER=node-modules
+FROM node:20-alpine AS base
 
-# Explicitly set PATH to include Yarn bin directory BEFORE installing dependencies
-ENV PATH="/app/node_modules/.bin:${PATH}"
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install --production=false
 
 COPY . .
-RUN yarn install --frozen-lockfile # Use frozen lock file for consistent builds
-# Remove "yarn add serve" as it might conflict with Dokploy's deployment process.  Dokploy should handle serving the admin build output correctly.
 
-# 2. The Build Command
-ARG MEDUSA_BACKEND_URL=https://api.nokor24.com
-ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
+ENV NODE_ENV production
 
-# 'yarn exec' is the most reliable way to run the local medusa binary in Yarn 4
-RUN yarn exec medusa build --admin-only
+# Admin build stage
+FROM node:20-alpine AS admin
 
+WORKDIR /admin
 
-EXPOSE 9000 #Dokploy should handle serving admin build output.
+COPY package*.json ./
 
-CMD ["/bin/sh"]  #Remove serve, dokploy will manage this step during deployment
+RUN npm install --production=false
+
+# Copy Admin code from build stage (assuming the build output is in a "dist" folder)
+COPY ../dist .  
+
+ENV NODE_ENV production
+
+CMD ["node", "server.js"]
