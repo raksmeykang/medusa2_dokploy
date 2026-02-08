@@ -20,11 +20,11 @@
 5- **Environment:** (make sure add “```sslmode=disable``` at the end of postgres url)
 ```env
 # Your Medusa backend
-MEDUSA_BACKEND_URL=https://api.nokor24.com
+MEDUSA_BACKEND_URL=https://api.domain.com
 # Your publishable key
-NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_3e6dee758ccab21e5cce41cd098921e7840a9b23cbbb5a23c3ebf780a13dd7b4
+NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=**publishable key**
 # Your store URL, should be updated to where you are hosting your storefront.
-NEXT_PUBLIC_BASE_URL=https://nokor24.com
+NEXT_PUBLIC_BASE_URL=https://domain.com
 ## Your preferred default region.
 NEXT_PUBLIC_DEFAULT_REGION=kh
 ## Your Stripe public key. See – https://docs.medusajs.com/resources/commerce-modules/payment/payment-provider/stripe
@@ -41,13 +41,13 @@ REVALIDATE_SECRET=supersecret
 ```
 6- **Build-time Arguments:** (make sure add “```sslmode=disable``` at the end of postgres url)
 ```env
-MEDUSA_BACKEND_URL=https://api.nokor24.com
-NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_3e6dee758ccab21e5cce41cd098921e7840a9b23cbbb5a23c3ebf780a13dd7b4
-NEXT_PUBLIC_BASE_URL=https://nokor24.com
+MEDUSA_BACKEND_URL=https://api.domain.com
+NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=**publishable key**
+NEXT_PUBLIC_BASE_URL=https://domain.com
 NEXT_PUBLIC_DEFAULT_REGION=kh
 ```
 
-6- **Domain**
+7- **Domain**
 
 - Host \= ```domain.com```  
 - Path \= ```/```  
@@ -56,7 +56,7 @@ NEXT_PUBLIC_DEFAULT_REGION=kh
 - Https \= ```enable```  
 - Certificate provider \= ```Let’s encrypt```
 
-6- **Deploy**
+8- **Deploy**
 
 - Go back to **General Tab**  
 - Deploy Setting \-\> **Deploy**
