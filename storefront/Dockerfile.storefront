@@ -1,22 +1,13 @@
 # Step 1: Base Image
 FROM node:20-alpine AS base
 RUN apk add --no-cache libc6-compat
-
-# 1. Enable Corepack and set the version globally
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
 # Step 2: Dependencies
 FROM base AS deps
 WORKDIR /app
-
-# 2. Copy only essential config files first
 COPY package.json yarn.lock .yarnrc.yml ./
-
-# --- THE FIX ---
-# Remove 'yarnPath' so Yarn doesn't look for a local .cjs file
 RUN sed -i '/yarnPath/d' .yarnrc.yml
-
-# Install dependencies
 RUN yarn install --immutable
 
 # Step 3: Builder
@@ -25,9 +16,17 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Medusa v2 Environment Variables (Passed from Dokploy)
+# Environment Variables
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
+ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+
+# --- THE FIX ---
+# Prevents Next.js from trying to fetch data during build
+ENV SKIP_METADATA_FETCH=true
+# Forces Next.js to treat this as a build phase even if it looks dynamic
+ENV NEXT_PHASE=phase-production-build
 
 RUN yarn build
 
@@ -35,7 +34,7 @@ RUN yarn build
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-ENV PORT 8000
+ENV PORT=8000
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
