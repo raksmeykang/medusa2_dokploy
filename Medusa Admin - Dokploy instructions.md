@@ -47,9 +47,10 @@ MEDUSA_ADMIN_PATH=/
 - Go back to **General Tab**  
 - Deploy Setting \-\> **Deploy**
 
-Your Admin is ready at https://admin.domain.com/app
+Your Admin is ready at https://admin.domain.com
+                    or https://admin.domain.com/app
 
-### Redirect domain (optional)
+### Redirect domain (optional) in case your admin at http://admin.domain.com/app
 
 15- **Advanced tab**
 
