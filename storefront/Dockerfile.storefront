@@ -1,8 +1,14 @@
 FROM node:20-alpine AS builder
 
-ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://127.0.0.1:9000
-ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=dummy
-ENV NEXT_PUBLIC_BASE_URL=https://nokor24.com
+# These ARGs allow Dokploy to pass your live keys into the build process
+ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
+ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+ARG NEXT_PUBLIC_BASE_URL
+
+# Set them as ENVs so Next.js sees them during 'yarn build'
+ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
 WORKDIR /app
 COPY . .
@@ -10,17 +16,16 @@ COPY . .
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 RUN yarn install
 
-# We add || true so that even if the 'Collecting page data' fails, 
-# the build continues and creates the standalone folder.
-RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 yarn build || true
+# This will now successfully pre-render pages because it has the real URL
+RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 yarn build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
-
 ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=8000
 
+# We pass the variables again for the Runtime environment
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
@@ -28,7 +33,6 @@ ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
-# Copy only what is needed from builder
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
