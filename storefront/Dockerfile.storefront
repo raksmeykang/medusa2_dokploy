@@ -1,23 +1,20 @@
 FROM ubuntu:22.04
 
-# Prevent interactive prompts during package installation
+# Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 1. Install core system tools
+# Install Node.js 20, Yarn, and dependencies
 RUN apt-get update && apt-get install -y \
-    curl \
-    wget \
-    sudo \
-    jq \
-    ca-certificates \
-    git \
-    bash \
-    build-essential \
+    curl git bash build-essential ca-certificates \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g yarn \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Set the working directory
+# Enable Corepack for Yarn 4 support
+RUN corepack enable && corepack prepare yarn@4.12.0 --activate
+
 WORKDIR /app
 
-# 3. Stay alive forever
-# This allows you to access the 'Console' tab in Dokploy anytime
+# Stay alive for Dokploy terminal access
 CMD ["sleep", "infinity"]
