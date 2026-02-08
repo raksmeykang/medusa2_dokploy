@@ -1,21 +1,18 @@
 FROM node:20-alpine AS builder
 
-# Declare the ARGs
-ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
-ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-ARG NEXT_PUBLIC_BASE_URL
-ARG NEXT_PUBLIC_DEFAULT_REGION
+# Hardcoding variables to bypass Dokploy UI issues
+ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=https://api.nokor24.com
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_3e6dee758ccab21e5cce41cd098921e7840a9b23cbbb5a23c3ebf780a13dd7b4
+ENV NEXT_PUBLIC_BASE_URL=https://nokor24.com
+ENV NEXT_PUBLIC_DEFAULT_REGION=kh
 
 WORKDIR /app
 COPY . .
 
-# FORCE-CREATE .env file for the build phase
-RUN echo "NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL" > .env &&     echo "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY" >> .env &&     echo "NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL" >> .env &&     echo "NEXT_PUBLIC_DEFAULT_REGION=$NEXT_PUBLIC_DEFAULT_REGION" >> .env
-
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 RUN yarn install
 
-# Now the build will find the .env file we just created
+# This will now definitely find the key above
 RUN NEXT_PHASE=phase-production-build yarn build
 
 FROM node:20-alpine AS runner
