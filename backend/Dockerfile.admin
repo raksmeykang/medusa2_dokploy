@@ -1,0 +1,35 @@
+# 1. Build Stage
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+RUN apk add --no-cache python3 make g++
+RUN corepack enable && corepack prepare yarn@4.12.0 --activate
+
+COPY .yarnrc.yml ./
+COPY .yarn ./.yarn
+COPY package.json yarn.lock* ./
+RUN yarn install --immutable
+
+COPY . .
+
+# This builds both the Backend and the Admin UI
+RUN yarn build
+
+# 2. Runner Stage
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Copy all node_modules and the built assets
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.medusa ./.medusa
+# Copy the config files needed for runtime
+COPY --from=builder /app/medusa-config.js* ./
+COPY --from=builder /app/medusa-config.ts* ./
+
+EXPOSE 9000
+
+# Start Medusa (Serving API and Admin on 9000)
+CMD ["sh", "-c", "npx medusa db:migrate && npx medusa start"]
