@@ -1,6 +1,6 @@
 FROM node:20-alpine AS builder
 
-# Dummies for build phase
+# Dummies to pass the build phase
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=dummy
 ENV NEXT_PUBLIC_BASE_URL=https://nokor24.com
@@ -8,9 +8,10 @@ ENV NEXT_PUBLIC_BASE_URL=https://nokor24.com
 WORKDIR /app
 COPY . .
 
-# Enable Corepack ONLY for the build phase
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 RUN yarn install
+
+# Build the app (ignoring network errors)
 RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 NEXT_PRIVATE_LOCAL_FETCH=1 yarn build || true
 
 FROM node:20-alpine AS runner
@@ -20,7 +21,7 @@ ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=8000
 
-# Inject real Dokploy values
+# Inject real Dokploy values at runtime
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
@@ -28,12 +29,13 @@ ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
+# Copy the standalone build files
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 8000
 
-# Bypass Yarn entirely in the runner to avoid the version error
-CMD ["./node_modules/.bin/next", "start", "-p", "8000"]
+# Standalone mode needs to run the server.js inside the standalone folder
+# but it also needs to be able to find the public and static files we just copied.
+CMD ["node", "server.js"]
