@@ -1,0 +1,8 @@
+{
+  "name": "medusa2_dokploy",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/raksmeykang/medusa2_dokploy",
+  "author": "raksmeykang <89441181+raksmeykang@users.noreply.github.com>",
+  "license": "MIT"
+}
