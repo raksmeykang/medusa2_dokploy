@@ -1,22 +1,24 @@
-FROM ubuntu:22.04
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-# 1. Install Node, Git, and Yarn
-RUN apt-get update && apt-get install -y \
-    curl git bash build-essential ca-certificates \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g yarn \
-    && rm -rf /var/lib/apt/lists/*
-
+FROM node:20-alpine AS builder
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY . .
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
+# These variables allow 'yarn build' to pass without a live backend
+ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=https://api.nokor24.com
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_3e6dee758ccab21e5cce41cd098921e7840a9b23cbbb5a23c3ebf780a13dd7b4
+ENV NEXT_PHASE=phase-production-build
+
+RUN yarn install
+RUN yarn build
+
+FROM node:20-alpine AS runner
 WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
-# --- THE MISSING STEP ---
-# Copy all your files from the GitHub repo into the /app folder
-COPY . .
-
-# Keep the container alive for your manual work
-CMD ["/bin/bash", "-c", "while true; do sleep 1000; done"]
+EXPOSE 8000
+CMD ["yarn", "start", "-p", "8000"]
