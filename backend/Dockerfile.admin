@@ -1,27 +1,14 @@
-FROM node:20-alpine AS base
-
-WORKDIR /app
-
+# --- Builder Stage ---
+FROM node:20-alpine AS builder
+WORKDIR /app/admin
 COPY package*.json ./
-
-RUN npm install --production=false
-
+RUN yarn install
 COPY . .
+RUN yarn build # Assuming 'build' creates /dist
 
-ENV NODE_ENV production
-
-# Admin build stage
-FROM node:20-alpine AS admin
-
-WORKDIR /admin
-
-COPY package*.json ./
-
-RUN npm install --production=false
-
-# Copy Admin code from build stage (assuming the build output is in a "dist" folder)
-COPY ../dist .  
-
-ENV NODE_ENV production
-
-CMD ["node", "server.js"]
+# --- Production Stage ---
+FROM node:20-alpine
+WORKDIR /app/admin
+COPY --from=builder /app/admin/dist .
+EXPOSE 9000
+CMD ["yarn", "start"] # Corrected CMD instruction for Yarn
