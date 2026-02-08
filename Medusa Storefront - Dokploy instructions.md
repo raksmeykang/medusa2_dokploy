@@ -1,15 +1,15 @@
-**\#\#\#\# Medusa Admin \- Dokploy**
+**\#\#\#\# Medusa StoreFront \- Dokploy**
 
-**\#\#\# Creating** **Backend Instance**  
+**\#\#\# Creating** **Storefront Instance**  
 9- Create Instance \-\> Service type \= Application   
-10- Instance name : ```Admin```
+10- Instance name : ```Storefront```
 
 11- **General tab** : Provider \= Github 
 
 - Branch \= main  
-- Build path= ```/```  
-- Build type \= ```Dockerfile```  
-- Dockerfile \= ```/backend/Dockerfile.admin```  
+- Build path= ```/storefront```  
+- Build type \= ```Dockerfile.storefront```  
+- Dockerfile \= ```/Dockerfile.admin```  
 - Docker Context Path \= ```/ ```
 - Docker Build Stage \= Optional
 
