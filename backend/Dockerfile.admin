@@ -1,4 +1,4 @@
-# 1. Build Stage
+# STAGE 1: Build
 FROM node:20-alpine AS builder
 WORKDIR /app
 
@@ -12,24 +12,24 @@ RUN yarn install --immutable
 
 COPY . .
 
-# This builds both the Backend and the Admin UI
-RUN yarn build
+# Build the Admin
+ARG MEDUSA_BACKEND_URL=https://api.nokor24.com
+ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
+RUN npx medusa build --admin-only
 
-# 2. Runner Stage
+# STAGE 2: Serve
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV=production
+# Install a tiny static file server
+RUN npm install -g serve
 
-# Copy all node_modules and the built assets
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.medusa ./.medusa
-# Copy the config files needed for runtime
-COPY --from=builder /app/medusa-config.js* ./
-COPY --from=builder /app/medusa-config.ts* ./
+# Copy only the built admin files from the builder
+COPY --from=builder /app/.medusa/admin ./public
 
+# Standardize on Port 9000
 EXPOSE 9000
 
-# Start Medusa (Serving API and Admin on 9000)
-CMD ["sh", "-c", "npx medusa db:migrate && npx medusa start"]
+# Serve the 'public' folder on port 9000
+# -s handles Single Page Application routing (index.html fallback)
+CMD ["serve", "-s", "public", "-l", "9000"]
