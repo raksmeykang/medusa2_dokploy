@@ -86,11 +86,11 @@ MEDUSA_ADMIN_ONBOARDING_TYPE=nextjs
 17. Navigate to **bin/sh**
 18. run this #
     ```
-    yarn medusa user --email Your@Email --password YourSecurePassword123!
+    npx medusa user --email your-email@example.com --password YourSecurePassword123
     ```
     or
     ```
-    cd /app && yarn medusa user --email Your@Email --password YourSecurePassword123!
+    cd /app && npx medusa user --email your-email@example.com --password YourSecurePassword123
     ```
 20. Your Admin info will be 
     - Username : Your@Email
