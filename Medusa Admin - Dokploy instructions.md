@@ -1,10 +1,10 @@
 **\#\#\#\# Medusa Admin \- Dokploy**
 
 **\#\#\# Creating** **Admin Instance**  
-9- Create Instance \-\> Service type \= Application   
-10- Instance name : ```Admin```
+1- Create Instance \-\> Service type \= Application   
+2- Instance name : ```Admin```
 
-11- **General tab** : Provider \= Github 
+3- **General tab** : Provider \= Github 
 
 - Branch \= main  
 - Build path= ```/backend```  
@@ -13,7 +13,7 @@
 - Docker Context Path \= ```/ ```
 - Docker Build Stage \= Optional
 
-12- **Environment:** (make sure add “```sslmode=disable``` at the end of postgres url)
+4- **Environment:** (make sure add “```sslmode=disable``` at the end of postgres url)
 ```env
 # --- RUNTIME SETTINGS ---
 NODE_ENV=production
@@ -33,7 +33,7 @@ ADMIN_PATH=/
 MEDUSA_ADMIN_PATH=/
 ```
 
-13- **Domain**
+5- **Domain**
 
 - Host \= ```admin.domain.com```  
 - Path \= ```/```  
@@ -42,7 +42,7 @@ MEDUSA_ADMIN_PATH=/
 - Https \= ```enable```  
 - Certificate provider \= ```Let’s encrypt```
 
-14- **Deploy**
+6- **Deploy**
 
 - Go back to **General Tab**  
 - Deploy Setting \-\> **Deploy**
@@ -52,7 +52,7 @@ Your Admin is ready at https://admin.domain.com
 
 ### Redirect domain (optional) in case your admin at http://admin.domain.com/app
 
-15- **Advanced tab**
+7- **Advanced tab**
 
 - Scroll down to **Redirects**  
 - **Add** redirect
