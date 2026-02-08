@@ -1,11 +1,11 @@
 FROM node:20-alpine AS builder
 
-# These ARGs allow Dokploy to pass your live keys into the build process
+# 1. ARGs for Build-time (Next.js pre-rendering)
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
 
-# Set them as ENVs so Next.js sees them during 'yarn build'
+# Set them as ENVs for the 'yarn build' step
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
@@ -16,16 +16,17 @@ COPY . .
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 RUN yarn install
 
-# This will now successfully pre-render pages because it has the real URL
+# This will now successfully pre-render pages
 RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 yarn build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
+
 ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=8000
 
-# We pass the variables again for the Runtime environment
+# 2. Re-inject variables for the Runtime environment
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
