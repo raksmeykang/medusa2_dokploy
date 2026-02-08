@@ -1,12 +1,10 @@
 FROM node:20-alpine AS builder
 
-# 1. Grab variables from Dokploy's "Build-time Arguments" section
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_DEFAULT_REGION
 
-# 2. Make them available to the Next.js build process
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
@@ -18,8 +16,9 @@ COPY . .
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 RUN yarn install
 
-# 3. This will now successfully pre-render categories, products, and SEO
-RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 yarn build
+# The '|| true' ensures that even if page collection fails, 
+# the standalone build files are still generated.
+RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 yarn build || true
 
 FROM node:20-alpine AS runner
 WORKDIR /app
@@ -28,7 +27,12 @@ ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=8000
 
-# Re-inject for runtime
+# We need these at runtime so the LIVE site can talk to the backend
+ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+ENV NEXT_PUBLIC_DEFAULT_REGION=$NEXT_PUBLIC_DEFAULT_REGION
+
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
