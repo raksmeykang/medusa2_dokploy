@@ -7,7 +7,7 @@
 11- **General tab** : Provider \= Github 
 
 - Branch \= main  
-- Build path= ```/```  
+- Build path= ```/backend```  
 - Build type \= ```Dockerfile```  
 - Dockerfile \= ```/backend/Dockerfile.admin```  
 - Docker Context Path \= ```/ ```
