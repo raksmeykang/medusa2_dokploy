@@ -1,12 +1,23 @@
-# Base image for Medusa v2
-FROM node:20-alpine
+FROM ubuntu:22.04
 
-RUN apk add --no-cache libc6-compat git
+# Prevent interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Enable Corepack for Yarn 4
-RUN corepack enable
+# 1. Install core system tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    sudo \
+    jq \
+    ca-certificates \
+    git \
+    bash \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
+# 2. Set the working directory
 WORKDIR /app
 
-# This keeps the container running so you can enter the terminal
-CMD ["tail", "-f", "/dev/null"]
+# 3. Stay alive forever
+# This allows you to access the 'Console' tab in Dokploy anytime
+CMD ["sleep", "infinity"]
