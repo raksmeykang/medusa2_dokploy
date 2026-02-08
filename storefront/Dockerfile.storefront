@@ -1,9 +1,7 @@
 FROM ubuntu:22.04
 
-# Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install Node.js 20, Yarn, and dependencies
 RUN apt-get update && apt-get install -y \
     curl git bash build-essential ca-certificates \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
@@ -11,10 +9,9 @@ RUN apt-get update && apt-get install -y \
     && npm install -g yarn \
     && rm -rf /var/lib/apt/lists/*
 
-# Enable Corepack for Yarn 4 support
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
 WORKDIR /app
 
-# Stay alive for Dokploy terminal access
-CMD ["sleep", "infinity"]
+# Now that the build is finished manually, the container can start normally
+CMD ["yarn", "start", "-p", "8000"]
