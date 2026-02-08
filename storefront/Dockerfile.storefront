@@ -6,11 +6,7 @@ RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 # Step 2: Dependencies
 FROM base AS deps
 WORKDIR /app
-
-# 1. Copy config and lockfile
 COPY package.json yarn.lock .yarnrc.yml ./
-
-# 2. THE FIX: Remove yarnPath and force a lockfile update to sync workspace metadata
 RUN sed -i '/yarnPath/d' .yarnrc.yml && \
     yarn install --no-immutable
 
@@ -20,13 +16,15 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Dummy envs to bypass build-time fetch
+# --- THE AGGRESSIVE BYPASS ---
+# We force Next.js to think it's just compiling, not pre-rendering.
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_dummy
 ENV SKIP_METADATA_FETCH=true
+ENV NEXT_SKIP_STATIC_GENERATION=true
+ENV NEXTJS_STATIC_OPTIMIZATION=false
 
-# Brute force build
-RUN yarn build || (echo "Build finished with dynamic fallback" && exit 0)
+RUN yarn build
 
 # Step 4: Runner
 FROM base AS runner
