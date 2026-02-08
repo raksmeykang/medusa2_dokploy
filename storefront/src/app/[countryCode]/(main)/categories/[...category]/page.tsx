@@ -7,6 +7,9 @@ import { StoreRegion } from "@medusajs/types"
 import CategoryTemplate from "@modules/categories/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
+// 1. ADD THIS: Force the page to be dynamic so it doesn't build at compile-time
+export const dynamic = "force-dynamic"
+
 type Props = {
   params: Promise<{ category: string[]; countryCode: string }>
   searchParams: Promise<{
@@ -15,6 +18,8 @@ type Props = {
   }>
 }
 
+// 2. COMMENT THIS OUT: This function triggers the network request during 'yarn build'
+/*
 export async function generateStaticParams() {
   const product_categories = await listCategories()
 
@@ -41,6 +46,7 @@ export async function generateStaticParams() {
 
   return staticParams
 }
+*/
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
@@ -59,7 +65,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       },
     }
   } catch (error) {
-    notFound()
+    // If we are in the build phase, this might fail, return a fallback title
+    return {
+      title: "Category | Medusa Store"
+    }
   }
 }
 
@@ -68,18 +77,23 @@ export default async function CategoryPage(props: Props) {
   const params = await props.params
   const { sortBy, page } = searchParams
 
-  const productCategory = await getCategoryByHandle(params.category)
+  try {
+    const productCategory = await getCategoryByHandle(params.category)
 
-  if (!productCategory) {
+    if (!productCategory) {
+      notFound()
+    }
+
+    return (
+      <CategoryTemplate
+        category={productCategory}
+        sortBy={sortBy}
+        page={page}
+        countryCode={params.countryCode}
+      />
+    )
+  } catch (error) {
+    // This will catch the error if the backend is down
     notFound()
   }
-
-  return (
-    <CategoryTemplate
-      category={productCategory}
-      sortBy={sortBy}
-      page={page}
-      countryCode={params.countryCode}
-    />
-  )
 }

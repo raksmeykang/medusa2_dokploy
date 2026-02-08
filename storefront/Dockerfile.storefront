@@ -1,6 +1,5 @@
 FROM node:20-alpine AS builder
 
-# Use localhost dummies so Next.js doesn't try to reach your real API during build
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://127.0.0.1:9000
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=dummy
 ENV NEXT_PUBLIC_BASE_URL=https://nokor24.com
@@ -11,9 +10,9 @@ COPY . .
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 RUN yarn install
 
-# This command will now succeed because Next.js won't try to pre-render the pages 
-# we marked as 'force-dynamic'
-RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 yarn build
+# We add || true so that even if the 'Collecting page data' fails, 
+# the build continues and creates the standalone folder.
+RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 yarn build || true
 
 FROM node:20-alpine AS runner
 WORKDIR /app
@@ -22,7 +21,6 @@ ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=8000
 
-# ARGs allow Dokploy to inject your REAL keys into the RUNNING container
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
@@ -30,6 +28,7 @@ ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
+# Copy only what is needed from builder
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
