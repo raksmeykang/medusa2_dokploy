@@ -1,40 +1,12 @@
-# Step 1: Base Image
-FROM node:20-alpine AS base
-RUN apk add --no-cache libc6-compat
-RUN corepack enable && corepack prepare yarn@4.12.0 --activate
+# Base image for Medusa v2
+FROM node:20-alpine
 
-# Step 2: Dependencies
-FROM base AS deps
+RUN apk add --no-cache libc6-compat git
+
+# Enable Corepack for Yarn 4
+RUN corepack enable
+
 WORKDIR /app
-COPY package.json yarn.lock .yarnrc.yml ./
-# Fix workspace/lockfile issues and remove local yarnPath
-RUN sed -i '/yarnPath/d' .yarnrc.yml && \
-    yarn install --no-immutable || yarn install
 
-# Step 3: Builder
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
-# --- THE FIX: Pass Dummy Env to the Build Command ---
-# This prevents Next.js from crashing when it can't find a live API
-ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
-ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_dummy
-ENV SKIP_METADATA_FETCH=true
-
-RUN yarn build || (echo "Pre-rendering failed, but build assets are saved" && exit 0)
-
-# Step 4: Runner
-FROM base AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-ENV PORT=8000
-
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
-EXPOSE 8000
-CMD ["yarn", "start", "-p", "8000"]
+# This keeps the container running so you can enter the terminal
+CMD ["tail", "-f", "/dev/null"]
