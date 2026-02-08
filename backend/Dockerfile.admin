@@ -1,14 +1,26 @@
-# --- Builder Stage ---
-FROM node:20-alpine AS builder
-WORKDIR /app/admin
-COPY package*.json ./
-RUN yarn install
-COPY . .
-RUN yarn build # Assuming 'build' creates /dist
-
-# --- Production Stage ---
 FROM node:20-alpine
-WORKDIR /app/admin
-COPY --from=builder /app/admin/dist .
+WORKDIR /app
+
+# Install build dependencies
+RUN apk add --no-cache python3 make g++
+
+# Enable Corepack for Yarn Berry
+RUN corepack enable && corepack prepare yarn@stable --activate
+ENV YARN_NODE_LINKER=node-modules
+
+# 1. Install all dependencies in the root first
+COPY backend/package.json backend/yarn.lock* ./
+RUN yarn install
+
+# 2. Copy source and build the application
+COPY backend/ .
+RUN yarn medusa build
+
+# 3. Final Step: Install dependencies inside the production build folder
+WORKDIR /app/.medusa/server
+RUN yarn install
+
 EXPOSE 9000
-CMD ["yarn", "start"] # Corrected CMD instruction for Yarn
+
+# Start the server from the production-ready directory
+CMD ["yarn", "medusa", "start"]
