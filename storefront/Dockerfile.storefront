@@ -7,6 +7,7 @@ RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 FROM base AS deps
 WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./
+# Heal the lockfile and remove yarnPath in one go
 RUN sed -i '/yarnPath/d' .yarnrc.yml && \
     yarn install --no-immutable
 
@@ -16,13 +17,16 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# --- THE AGGRESSIVE BYPASS ---
-# We force Next.js to think it's just compiling, not pre-rendering.
+# --- THE AGGRESSIVE BYPASS: Next.js 15 Build Fix ---
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_dummy
 ENV SKIP_METADATA_FETCH=true
+
+# These flags force Next.js to skip the "Collecting page data" phase
 ENV NEXT_SKIP_STATIC_GENERATION=true
 ENV NEXTJS_STATIC_OPTIMIZATION=false
+# Disables the strict worker that crashes on fetch failure
+ENV NEXT_PRIVATE_LOCAL_SKIP_FETCH=1
 
 RUN yarn build
 
