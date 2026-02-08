@@ -16,13 +16,14 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# --- THE FIX: Bypass Build-Time Fetching ---
-# We provide a dummy localhost address here so the build doesn't crash.
-# Dokploy will override these with your REAL values at runtime.
+# --- THE AGGRESSIVE FIX: Bypass all build-time networking ---
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://127.0.0.1:9000
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_dummy
 ENV SKIP_METADATA_FETCH=true
 ENV NEXT_PHASE=phase-production-build
+# Force Next.js to skip static generation for dynamic routes during build
+ENV NEXT_FORCE_DYNAMIC=true
+ENV NEXT_PRIVATE_LOCAL_SKIP_FETCH=1
 
 RUN yarn build
 
