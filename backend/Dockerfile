@@ -18,6 +18,7 @@ RUN yarn install --immutable
 
 # Copy source and build
 COPY . .
+RUN npx medusa build --admin
 RUN yarn build
 
 # STAGE 2: Run
