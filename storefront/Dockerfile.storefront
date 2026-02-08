@@ -1,14 +1,9 @@
 FROM node:20-alpine AS builder
 
-# Arguments for Dokploy
-ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
-ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-ARG NEXT_PUBLIC_BASE_URL
-
-# Set them as ENVs
-ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
-ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+# Use a dummy backend during build to prevent connection attempts
+ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=temp_key
+ENV NEXT_PUBLIC_BASE_URL=https://nokor24.com
 
 WORKDIR /app
 COPY . .
@@ -16,12 +11,21 @@ COPY . .
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 RUN yarn install
 
-# CRITICAL: These flags tell Next.js to skip the "smart" checks and just compile
-RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=temp_key_to_pass_build yarn build
+# CRITICAL: Skip data fetching and static generation during build
+# This avoids the ECONNREFUSED error
+RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 NEXT_PRIVATE_LOCAL_FETCH=1 yarn build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+
+# Re-declare the variables so the RUNNING container uses your Dokploy UI values
+ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
+ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+ARG NEXT_PUBLIC_BASE_URL
+ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
@@ -29,5 +33,4 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 8000
-# Ensure it runs on 0.0.0.0 so Dokploy can route to it
 CMD ["yarn", "start", "-p", "8000", "-H", "0.0.0.0"]
