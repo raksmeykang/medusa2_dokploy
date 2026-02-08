@@ -15,7 +15,11 @@ export default defineConfig({
     }
   },
   admin: {
+    // THIS LINE FIXES THE "CANNOT GET /" ERROR
+    path: "/", 
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
+    // Ensure the dashboard knows where the backend is
+    backendUrl: process.env.MEDUSA_BACKEND_URL || "https://api.nokor24.com",
   },
   modules: [
     {
