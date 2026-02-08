@@ -1,30 +1,26 @@
 FROM node:20-alpine AS builder
 
-# Set dummy values so the compiler doesn't crash
+# Dummies for build phase
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
-ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=dummy_key
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=dummy
 ENV NEXT_PUBLIC_BASE_URL=https://nokor24.com
 
 WORKDIR /app
 COPY . .
 
+# Enable Corepack ONLY for the build phase
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 RUN yarn install
-
-# FORCE the build to finish even if static generation fails
-# This ensures the container actually reaches the 'runner' stage
 RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 NEXT_PRIVATE_LOCAL_FETCH=1 yarn build || true
 
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-# Ensure we are in production mode
 ENV NODE_ENV=production
-# CRITICAL: This allows Dokploy to see the container
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=8000
 
-# Re-declare ARGs so Dokploy UI values override the dummies at runtime
+# Inject real Dokploy values
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
@@ -38,5 +34,6 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 8000
-# Running 'yarn start' will now use the LIVE environment variables
-CMD ["yarn", "start", "-p", "8000"]
+
+# Bypass Yarn entirely in the runner to avoid the version error
+CMD ["./node_modules/.bin/next", "start", "-p", "8000"]
