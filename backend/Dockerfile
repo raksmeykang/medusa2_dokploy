@@ -1,4 +1,25 @@
-# ... (Build Stage stays the same)
+# 1. Build Stage - MUST HAVE 'AS builder'
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apk add --no-cache python3 make g++
+
+# Enable Corepack for Yarn 4
+RUN corepack enable && corepack prepare yarn@4.12.0 --activate
+
+# Copy Yarn configuration and binary
+COPY .yarnrc.yml ./
+COPY .yarn ./.yarn
+COPY package.json yarn.lock* ./
+
+# Install dependencies
+RUN yarn install --immutable
+
+# Copy source code and build
+COPY . .
+RUN yarn build
 
 # 2. Runner Stage
 FROM node:20-alpine AS runner
@@ -10,15 +31,12 @@ ENV NODE_ENV=production
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
 
-# CRITICAL FIX: Copy the compiled server files AND the config file
-# Medusa v2 builds everything into .medusa/server
+# Copy the compiled server, the admin dashboard, and the config
 COPY --from=builder /app/.medusa/server ./
-COPY --from=builder /app/medusa-config.js ./ 
-
-# If you are using the admin, copy that folder too
 COPY --from=builder /app/.medusa/admin ./.medusa/admin
+COPY --from=builder /app/medusa-config.js ./ 
 
 EXPOSE 9000
 
-# Run migrations and start
+# Run migrations and start the server
 CMD ["sh", "-c", "npx medusa db:migrate && npx medusa start"]
