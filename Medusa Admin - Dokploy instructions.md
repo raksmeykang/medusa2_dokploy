@@ -15,19 +15,22 @@
 
 12- **Environment:** (make sure add “```sslmode=disable``` at the end of postgres url)
 ```env
-MEDUSA_ADMIN_BACKEND_URL=https://api.domain.com  
-DATABASE_URL=postgresql://postgres:1…:5432/postgres?sslmode=disable  
-REDIS_URL=redis://default:...:6379
-
-MEDUSA_ADMIN_PATH=.medusa/admin  
+# --- RUNTIME SETTINGS ---
+NODE_ENV=production
+PORT=9000
+# Keep this false so the build process isn't skipped
 DISABLE_MEDUSA_ADMIN=false
-
-SESSION_SECRET=long-secure-session-secret-raksmey  
-JWT_SECRET=strong-jwt-secret-for-medusa-backend  
-COOKIE_SECRET=strong-jwt-secret-for-medusa-backend
-
-ADMIN_CORS=https://admin.domain.com  
-HOST=0.0.0.0
+# --- CONNECTION (CRITICAL) ---
+# This is the most important one. It tells the browser where the API is.
+MEDUSA_BACKEND_URL=https://api.domain.com
+# --- BUILD-TIME SETTINGS ---
+# Medusa sometimes looks for these specific keys during the 'build' command
+BACKEND_URL=https://api.domain.com
+ADMIN_PATH=/
+# --- UI SETTINGS ---
+# This ensures admin.domain.com loads the dashboard at the root "/"
+# instead of admin.domain.com/app
+MEDUSA_ADMIN_PATH=/
 ```
 
 13- **Domain**
