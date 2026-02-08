@@ -14,5 +14,9 @@ RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
 WORKDIR /app
 
-# 2. Use a loop that never ends as the primary process
+# --- THE MISSING STEP ---
+# Copy all your files from the GitHub repo into the /app folder
+COPY . .
+
+# Keep the container alive for your manual work
 CMD ["/bin/bash", "-c", "while true; do sleep 1000; done"]
