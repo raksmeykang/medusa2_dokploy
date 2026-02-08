@@ -1,80 +1,62 @@
-**\#\#\#\# Medusa StoreFront \- Dokploy**
+**\#\#\#\# Medusa StoreFront \- Dokploy \#\#\#**
 
-**\#\#\# Creating** **Storefront Instance**  
-9- Create Instance \-\> Service type \= Application   
-10- Instance name : ```Storefront```
+**Creating Storefront Instance**  
+1- Create Instance \-\> Service type \= Application   
+2- Instance name : ```Storefront```
 
-11- **General tab** : Provider \= Github 
+3- **General tab** : Provider \= Github 
 
 - Branch \= main  
 - Build path= ```/storefront```  
-- Build type \= ```Dockerfile.storefront```  
-- Dockerfile \= ```/Dockerfile.admin```  
+- Build type \= ```Dockerfile```  
+- Dockerfile \= ```/Dockerfile.storefront```  
 - Docker Context Path \= ```/ ```
 - Docker Build Stage \= Optional
 
-12- **Environment:** (make sure add “```sslmode=disable``` at the end of postgres url)
+4- **Environment:** (make sure add “```sslmode=disable``` at the end of postgres url)
 ```env
-# --- RUNTIME SETTINGS ---
-NODE_ENV=production
-PORT=9000
-# Keep this false so the build process isn't skipped
-DISABLE_MEDUSA_ADMIN=false
-# --- CONNECTION (CRITICAL) ---
-# This is the most important one. It tells the browser where the API is.
-MEDUSA_BACKEND_URL=https://api.domain.com
-# --- BUILD-TIME SETTINGS ---
-# Medusa sometimes looks for these specific keys during the 'build' command
-BACKEND_URL=https://api.domain.com
-ADMIN_PATH=/
-# --- UI SETTINGS ---
-# This ensures admin.domain.com loads the dashboard at the root "/"
-# instead of admin.domain.com/app
-MEDUSA_ADMIN_PATH=/
+# Your Medusa backend
+MEDUSA_BACKEND_URL=https://api.nokor24.com
+# Your publishable key
+NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_3e6dee758ccab21e5cce41cd098921e7840a9b23cbbb5a23c3ebf780a13dd7b4
+# Your store URL, should be updated to where you are hosting your storefront.
+NEXT_PUBLIC_BASE_URL=https://nokor24.com
+## Your preferred default region.
+NEXT_PUBLIC_DEFAULT_REGION=kh
+## Your Stripe public key. See – https://docs.medusajs.com/resources/commerce-modules/payment/payment-provider/stripe
+#NEXT_PUBLIC_STRIPE_KEY=
+## Your Medusa payments publishable key. You can find it in your Medusa dashbard.
+#NEXT_PUBLIC_MEDUSA_PAYMENTS_PUBLISHABLE_KEY=
+## Your Medusa payments external account ID. You can find it in your Medusa dashbard.
+#NEXT_PUBLIC_MEDUSA_PAYMENTS_ACCOUNT_ID=
+## Your Next.js revalidation secret. See – https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#on-demand-revalidation
+REVALIDATE_SECRET=supersecret
+## For Cloud users: add your Medusa Cloud S3 hostname and pathname to enable image optimization.
+#MEDUSA_CLOUD_S3_HOSTNAME=
+#MEDUSA_CLOUD_S3_PATHNAME=
+```
+5- **Build-time Arguments:** (make sure add “```sslmode=disable``` at the end of postgres url)
+```env
+MEDUSA_BACKEND_URL=https://api.nokor24.com
+NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_3e6dee758ccab21e5cce41cd098921e7840a9b23cbbb5a23c3ebf780a13dd7b4
+NEXT_PUBLIC_BASE_URL=https://nokor24.com
+NEXT_PUBLIC_DEFAULT_REGION=kh
 ```
 
-13- **Domain**
+6- **Domain**
 
-- Host \= ```admin.domain.com```  
+- Host \= ```domain.com```  
 - Path \= ```/```  
 - Internal path \= ```/```  
-- Container port \= ```9000```  
+- Container port \= ```8000```  
 - Https \= ```enable```  
 - Certificate provider \= ```Let’s encrypt```
 
-14- **Deploy**
+6- **Deploy**
 
 - Go back to **General Tab**  
 - Deploy Setting \-\> **Deploy**
 
-Your Admin is ready at https://admin.domain.com
-                    or https://admin.domain.com/app
-
-### Redirect domain (optional) in case your admin at http://admin.domain.com/app
-
-15- **Advanced tab**
-
-- Scroll down to **Redirects**  
-- **Add** redirect
-
-.Preset:
-```
-No preset selected
-```
-.Regex:
-```
-^https?://admin.domain.com
-```
-.Replacement:
-```
-https://admin.doamin.com/app/
-```
-.Permanent:
-```
-ON
-```
-
-. **Congratulations** now your Admin works without type /app
-. **Final Admin url:** https://admin.domain.com or https://admin.domain.com/app
+**Congratulations** Your Store is ready at https://domain.com
 
 
