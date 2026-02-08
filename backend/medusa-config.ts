@@ -19,17 +19,18 @@ export default defineConfig({
     disable: process.env.DISABLE_MEDUSA_ADMIN === "true",
   },
   modules: [
-    {
-      resolve: "@medusajs/medusa/event-bus-redis",
-      options: {
-        redisUrl: process.env.REDIS_URL,
-      },
+  {
+    resolve: "@medusajs/medusa/event-bus-redis",
+    options: {
+      redisUrl: process.env.REDIS_URL,
     },
-    {
-      resolve: "@medusajs/medusa/workflow-engine-redis",
-      options: {
-        redisUrl: process.env.REDIS_URL,
-      },
+  },
+  {
+    resolve: "@medusajs/medusa/workflow-engine-redis",
+    options: {
+      // Critical fix: ensure this matches the environment variable name
+      redisUrl: process.env.REDIS_URL, 
     },
-  ],
+  },
+],
 })
