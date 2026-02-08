@@ -37,23 +37,31 @@ Detailed instructions for deploying the Medusa backend using Dokploy.
     > **Note:** make sure add `sslmode=disable` at the end of postgres url.
 
    ```env
-   #Postgres
-   DATABASE_URL=postgresql://postgres:...5432/postgres?sslmode=disable
-   # Redis
-   REDIS_URL=redis://default:...:6379
-   MEDUSA_CACHE_REDIS_URL=redis://default:...:6379
-   # Secrets
-   SESSION_SECRET=long-secure-session-secret-123
-   JWT_SECRET=strong-jwt-secret-for-medusa-backend
-   COOKIE_SECRET=strong-jwt-secret-for-medusa-backend
+   # --- CORE SETTINGS ---
+PORT=9000
+NODE_ENV=production
+# Change this to a long random string (e.g., openssl rand -base64 32)
+COOKIE_SECRET=supersecret-change-me 
+# --- DATABASE & REDIS ---
+DATABASE_URL=postgresql://postgres:1...8d:5432/postgres?sslmode=disable
+# Required for Medusa v2 Workflows and Event Bus
+REDIS_URL=redis://default:ra...x0err:6379
+# --- ADMIN SETTINGS (The "Official" way) ---
+# This must be false to keep the admin active
+DISABLE_MEDUSA_ADMIN=true
+# This tells the Admin UI where to send API calls
+MEDUSA_BACKEND_URL=https://api.domain.com
+# Set to "/" if you want admin.domain.com to load the dashboard immediately
+MEDUSA_ADMIN_PATH=/
 
-   # CORS Settings
-   STORE_CORS=https://nokor24.com,https://www.nokor24.com
-   ADMIN_CORS=https://admin.nokor24.com
-   AUTH_CORS=https://nokor24.com,https://www.nokor24.com,https://admin.nokor24.com
+# --- CORS SETTINGS (CRITICAL) ---
+# Allow the Admin and the Storefront to talk to the Backend
+ADMIN_CORS=https://admin.domain.com
+AUTH_CORS=https://admin.domain.com,https://domain.com,https://www.domain.com
+STORE_CORS=https://domain.com,https://www.domain.com
 
-   # Admin Control (CRITICAL: Set to true for this instance)
-   DISABLE_MEDUSA_ADMIN=true
+# --- ONBOARDING (Optional) ---
+MEDUSA_ADMIN_ONBOARDING_TYPE=nextjs
 
    ```
 
