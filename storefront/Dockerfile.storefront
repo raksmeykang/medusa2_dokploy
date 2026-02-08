@@ -2,6 +2,7 @@ FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# 1. Install Node, Git, and Yarn
 RUN apt-get update && apt-get install -y \
     curl git bash build-essential ca-certificates \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
@@ -13,5 +14,5 @@ RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
 WORKDIR /app
 
-# Now that the build is finished manually, the container can start normally
-CMD ["yarn", "start", "-p", "8000"]
+# 2. Use a loop that never ends as the primary process
+CMD ["/bin/bash", "-c", "while true; do sleep 1000; done"]
