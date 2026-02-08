@@ -3,26 +3,28 @@ FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Enable Corepack to use Yarn 4
+# Enable Corepack to use the Yarn version defined in package.json
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
+# Copy the configuration files for Yarn 4
 COPY package.json yarn.lock .yarnrc.yml ./
-# If you have a .yarn folder (containing plugins/releases), copy it too
+# Copy the .yarn folder if it exists (contains releases/plugins)
 COPY .yarn ./.yarn 
 
+# In Yarn 4, --immutable is the equivalent of --frozen-lockfile
 RUN yarn install --immutable
 
 # Stage 2: Build the application
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Re-enable Corepack in this stage too
+# Re-enable Corepack for the build stage
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build-time environment variables (Fixed Legacy Format)
+# Build-time environment variables (Updated to standard format)
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
@@ -41,6 +43,7 @@ ENV NODE_ENV=production
 ENV PORT=8000
 ENV HOSTNAME="0.0.0.0"
 
+# Copy essential files for standalone mode
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
