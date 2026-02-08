@@ -23,4 +23,5 @@ RUN yarn install
 EXPOSE 9000
 
 # Start the server from the production-ready directory
-CMD ["yarn", "medusa", "start"]
+#oldworking CMD ["yarn", "medusa", "start"]
+CMD yarn medusa db:migrate && yarn start
