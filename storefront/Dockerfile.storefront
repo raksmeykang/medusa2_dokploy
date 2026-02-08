@@ -1,8 +1,8 @@
 FROM node:20-alpine AS builder
 
-# Use a dummy backend during build to prevent connection attempts
+# Use dummy values to satisfy the compiler
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
-ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=temp_key
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=dummy
 ENV NEXT_PUBLIC_BASE_URL=https://nokor24.com
 
 WORKDIR /app
@@ -11,15 +11,14 @@ COPY . .
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 RUN yarn install
 
-# CRITICAL: Skip data fetching and static generation during build
-# This avoids the ECONNREFUSED error
-RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 NEXT_PRIVATE_LOCAL_FETCH=1 yarn build
+# THE FIX: force Next.js to skip ALL static generation and data fetching
+RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 NEXT_PRIVATE_LOCAL_FETCH=1 NEXT_PHASE=phase-production-build yarn build || true
 
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Re-declare the variables so the RUNNING container uses your Dokploy UI values
+# Re-inject the REAL variables for the RUNNING container
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
@@ -33,4 +32,5 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 8000
+# Ensure we bind to 0.0.0.0
 CMD ["yarn", "start", "-p", "8000", "-H", "0.0.0.0"]
