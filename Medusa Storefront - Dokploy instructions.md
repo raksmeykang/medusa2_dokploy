@@ -13,7 +13,11 @@
 - Docker Context Path \= ```/ ```
 - Docker Build Stage \= Optional
 
-4- **Environment:** (make sure add “```sslmode=disable``` at the end of postgres url)
+4- **Go to Admin** https://admin.domain.com
+- Setting -> Regions -> Create a region example : `us` or `kh`
+- Setting -> Developer(Publishable API Keys) -> Create a key -> Save **publishable key** in a note
+
+5- **Environment:** (make sure add “```sslmode=disable``` at the end of postgres url)
 ```env
 # Your Medusa backend
 MEDUSA_BACKEND_URL=https://api.nokor24.com
@@ -35,7 +39,7 @@ REVALIDATE_SECRET=supersecret
 #MEDUSA_CLOUD_S3_HOSTNAME=
 #MEDUSA_CLOUD_S3_PATHNAME=
 ```
-5- **Build-time Arguments:** (make sure add “```sslmode=disable``` at the end of postgres url)
+6- **Build-time Arguments:** (make sure add “```sslmode=disable``` at the end of postgres url)
 ```env
 MEDUSA_BACKEND_URL=https://api.nokor24.com
 NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_3e6dee758ccab21e5cce41cd098921e7840a9b23cbbb5a23c3ebf780a13dd7b4
