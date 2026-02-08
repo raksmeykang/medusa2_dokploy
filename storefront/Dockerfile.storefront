@@ -1,27 +1,45 @@
-FROM node:20-debian AS base
+# Step 1: Base Image
+FROM node:20-alpine AS base
+RUN apk add --no-cache libc6-compat
+# Enable Corepack to use modern Yarn
+RUN corepack enable && corepack prepare yarn@4.1.0 --activate
 
+# Step 2: Dependencies
+FROM base AS deps
 WORKDIR /app
 
-RUN corepack enable && \
-    yarn set version 1.22.19 # Use a stable, older version known to work
+# Copy yarn configuration and lockfile
+COPY package.json yarn.lock .yarnrc.yml* ./
+# If you have a .yarn folder for plugins/releases, uncomment the next line
+# COPY .yarn ./.yarn
 
-COPY package*.json yarn.lock ./
+# Install dependencies
+RUN yarn install --immutable
 
-RUN yarn install --frozen-lockfile
-
+# Step 3: Builder
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Environment variables needed at build time for Next.js
+ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
+ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 
 RUN yarn build
 
-FROM node:20-alpine AS production
-
+# Step 4: Runner
+FROM base AS runner
 WORKDIR /app
-COPY --from=base /app/node_modules ./node_modules
-COPY --from=base /app/.next ./
-COPY --from=base /app/public ./public
-COPY --from=base /app/package.json ./
-COPY --from=base /app/yarn.lock ./
+
+ENV NODE_ENV=production
+
+# Copy necessary files from builder
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 8000
 
-CMD ["yarn", "start"]
+CMD ["yarn", "start", "-p", "8000"]
