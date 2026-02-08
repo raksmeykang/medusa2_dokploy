@@ -1,12 +1,12 @@
 FROM node:20-alpine AS builder
 
-# 1. Capture the Build-time Arguments from Dokploy
+# Capturing Build-time Arguments (ARGs)
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_DEFAULT_REGION
 
-# 2. Make them available to the 'yarn build' process
+# Injecting them as ENV for 'yarn build'
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
@@ -18,7 +18,7 @@ COPY . .
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 RUN yarn install
 
-# 3. This will now succeed because it uses the internal network
+# This will now successfully pre-render categories, collections, and products
 RUN SKIP_TYPES_CHECK=1 SKIP_LINT=1 yarn build
 
 FROM node:20-alpine AS runner
@@ -28,7 +28,7 @@ ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
 ENV PORT=8000
 
-# Copy the standalone build files generated above
+# Copy the standalone build files
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
