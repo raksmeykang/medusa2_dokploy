@@ -1,4 +1,3 @@
-// backend/medusa-config.ts
 import { loadEnv, defineConfig } from '@medusajs/framework/utils'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
@@ -6,8 +5,7 @@ loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 export default defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
-    // Add redisUrl here to provide a default for all modules
-    redisUrl: process.env.REDIS_URL, 
+    redisUrl: process.env.REDIS_URL, // Global Redis reference
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
@@ -29,7 +27,9 @@ export default defineConfig({
     {
       resolve: "@medusajs/medusa/workflow-engine-redis",
       options: {
-        redisUrl: process.env.REDIS_URL,
+        redis: {
+          url: process.env.REDIS_URL, // Note the nested 'redis: { url: ... }' structure
+        },
       },
     },
   ],
