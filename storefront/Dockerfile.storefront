@@ -16,17 +16,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Environment Variables
-ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
-ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
-ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-
-# --- THE FIX ---
-# Prevents Next.js from trying to fetch data during build
+# --- THE FIX: Bypass Build-Time Fetching ---
+# We provide dummy values here just for the build process.
+# Dokploy will override these with your REAL values at runtime.
+ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://127.0.0.1:9000
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_dummy
 ENV SKIP_METADATA_FETCH=true
-# Forces Next.js to treat this as a build phase even if it looks dynamic
-ENV NEXT_PHASE=phase-production-build
 
 RUN yarn build
 
