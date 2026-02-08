@@ -17,11 +17,12 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # --- THE FIX: Bypass Build-Time Fetching ---
-# We provide dummy values here just for the build process.
+# We provide a dummy localhost address here so the build doesn't crash.
 # Dokploy will override these with your REAL values at runtime.
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://127.0.0.1:9000
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_dummy
 ENV SKIP_METADATA_FETCH=true
+ENV NEXT_PHASE=phase-production-build
 
 RUN yarn build
 
