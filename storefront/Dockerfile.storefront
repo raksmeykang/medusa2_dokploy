@@ -1,30 +1,22 @@
 FROM node:20-alpine
-
 WORKDIR /app
-
 # Enable Corepack for Yarn 4
+RUN apk add --no-cache curl  # Add curl
 RUN corepack enable && corepack prepare yarn@4.12.0 --activate
-
-# Copy all storefront files
 COPY . .
 
-# --- ADD THESE ARGS HERE ---
-# These allow Dokploy to pass your variables into the build process
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_BASE_URL
 
-# Now make them available to the 'yarn build' command
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 
-# Skip build-time data fetching to prevent ECONNREFUSED
-ENV SKIP_PRODUCT_VALIDATION=true
+# Wait for backend to be available before building. Adjust timeout if necessary
+RUN until curl -s --fail http://${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/health; do echo "Waiting for backend..."; sleep 5; done
 
 RUN yarn install
 RUN yarn build
-
 EXPOSE 8000
-
 CMD ["yarn", "start"]
