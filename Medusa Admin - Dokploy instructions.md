@@ -1,6 +1,6 @@
 **\#\#\#\# Medusa Admin \- Dokploy**
 
-**\#\#\# Creating** **Backend Instance**  
+**\#\#\# Creating** **Admin Instance**  
 9- Create Instance \-\> Service type \= Application   
 10- Instance name : ```Admin```
 
