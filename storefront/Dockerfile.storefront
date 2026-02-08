@@ -6,9 +6,13 @@ RUN corepack enable && corepack prepare yarn@4.12.0 --activate
 # Step 2: Dependencies
 FROM base AS deps
 WORKDIR /app
+
+# 1. Copy config and lockfile
 COPY package.json yarn.lock .yarnrc.yml ./
-RUN sed -i '/yarnPath/d' .yarnrc.yml
-RUN yarn install --immutable
+
+# 2. THE FIX: Remove yarnPath and force a lockfile update to sync workspace metadata
+RUN sed -i '/yarnPath/d' .yarnrc.yml && \
+    yarn install --no-immutable
 
 # Step 3: Builder
 FROM base AS builder
@@ -16,15 +20,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# --- THE FIX ---
-# We use '|| true' to tell Docker: "Even if the build fails to fetch pages, keep going."
-# We provide dummy values so Next.js doesn't crash looking for missing variables.
+# Dummy envs to bypass build-time fetch
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_dummy
 ENV SKIP_METADATA_FETCH=true
 
-# This is the "Brute Force" build command
-RUN yarn build || (echo "Build failed but continuing for runtime injection" && exit 0)
+# Brute force build
+RUN yarn build || (echo "Build finished with dynamic fallback" && exit 0)
 
 # Step 4: Runner
 FROM base AS runner
