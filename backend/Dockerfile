@@ -1,6 +1,5 @@
 # 1. Build Stage
 FROM node:20-alpine AS builder
-
 WORKDIR /app
 
 # Install system dependencies
@@ -17,8 +16,10 @@ COPY package.json yarn.lock* ./
 # Install dependencies
 RUN yarn install --immutable
 
-# Copy source code and build
+# Copy source code
 COPY . .
+
+# CRITICAL: This builds the Backend AND the Admin Dashboard
 RUN yarn build
 
 # 2. Runner Stage
@@ -27,17 +28,15 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copy node_modules and package.json
+# Copy built assets and modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
-
-# Copy only the server build (ignores the admin build)
-COPY --from=builder /app/.medusa/server ./
-
-# Copy the config file specifically
-COPY --from=builder /app/medusa-config.ts ./
+COPY --from=builder /app/.medusa ./.medusa
+# Copy config files
+COPY --from=builder /app/medusa-config.js* ./
+COPY --from=builder /app/medusa-config.ts* ./
 
 EXPOSE 9000
 
-# Run migrations and start the server
+# Start everything on Port 9000
 CMD ["sh", "-c", "npx medusa db:migrate && npx medusa start"]
